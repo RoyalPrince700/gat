@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api/client';
+import smipayLogo from '../assets/smipaylogo.jpeg';
 import { capitalizeFirst } from '../constants/surveys';
 import { getThemeForSlug } from '../constants/themes';
 
@@ -47,8 +48,10 @@ const PublicSurveyPage = () => {
     };
   }, [slug]);
 
-  const theme = getThemeForSlug(survey?.companySlug || 'smipay');
+  const companySlug = survey?.companySlug || 'smipay';
+  const theme = getThemeForSlug(companySlug);
   const brand = theme.brandHtml;
+  const isSmipay = companySlug === 'smipay';
 
   const setAnswer = (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -84,6 +87,17 @@ const PublicSurveyPage = () => {
     }
   };
 
+  const brandMark = isSmipay ? (
+    <div className="public-survey-brand">
+      <img src={smipayLogo} alt="SmiPay" className="public-survey-logo" />
+    </div>
+  ) : (
+    <div className="public-survey-brand">
+      {brand.primary}
+      {brand.accent ? <span>{brand.accent}</span> : null}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="public-survey-page">
@@ -107,8 +121,16 @@ const PublicSurveyPage = () => {
 
   if (done) {
     return (
-      <div className="public-survey-page">
+      <div
+        className={`public-survey-page public-survey-${theme.id}`}
+        style={{
+          '--survey-accent': theme.accent,
+          '--survey-accent-soft': theme.accentSoft,
+          '--survey-bg': theme.bg,
+        }}
+      >
         <div className="public-survey-card public-survey-thanks">
+          {brandMark}
           <h1>Thank you</h1>
           <p className="lede">Your response has been recorded.</p>
         </div>
@@ -126,10 +148,7 @@ const PublicSurveyPage = () => {
       }}
     >
       <div className="public-survey-card">
-        <div className="public-survey-brand">
-          {brand.primary}
-          {brand.accent ? <span>{brand.accent}</span> : null}
-        </div>
+        {brandMark}
         <h1>{survey.title}</h1>
         {survey.description && <p className="lede">{survey.description}</p>}
 
