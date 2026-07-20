@@ -34,6 +34,25 @@ export const emptySurveyForm = () => ({
   questions: [emptyQuestion()],
 });
 
+/** Prefill the admin form from an existing survey (keeps question ids). */
+export const surveyToForm = (survey) => ({
+  title: survey?.title || '',
+  description: survey?.description || '',
+  status: survey?.status || 'active',
+  tagsText: (survey?.tags || []).join(', '),
+  questions:
+    survey?.questions?.length > 0
+      ? survey.questions.map((q) => ({
+          id: q.id,
+          type: q.type || 'short_text',
+          label: q.label || '',
+          required: q.required !== false,
+          optionsText: (q.options || []).join('\n'),
+          maxRating: q.maxRating || 5,
+        }))
+      : [emptyQuestion()],
+});
+
 /** Capitalize the first letter of a string (leave the rest unchanged). */
 export const capitalizeFirst = (text) => {
   const s = String(text ?? '');

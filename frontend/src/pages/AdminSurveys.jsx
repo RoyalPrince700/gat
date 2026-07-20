@@ -14,6 +14,7 @@ import {
   Eye,
   Link2,
   MessageSquareText,
+  Pencil,
   Plus,
   Trash2,
   X,
@@ -27,6 +28,7 @@ import {
   formatAnswerValue,
   QUESTION_TYPES,
   surveyPublicUrl,
+  surveyToForm,
   SURVEY_STATUSES,
 } from '../constants/surveys';
 import { useCompany } from '../context/CompanyContext';
@@ -44,6 +46,7 @@ const AdminSurveys = () => {
   const [surveys, setSurveys] = useState([]);
   const [summary, setSummary] = useState(null);
   const [form, setForm] = useState(emptySurveyForm);
+  const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterTag, setFilterTag] = useState('all');
@@ -126,7 +129,34 @@ const AdminSurveys = () => {
 
   const resetForm = () => {
     setForm(emptySurveyForm());
+    setEditingId(null);
     setShowForm(false);
+  };
+
+  const startCreate = () => {
+    setEditingId(null);
+    setForm(emptySurveyForm());
+    setShowForm(true);
+    setSuccess('');
+    setError('');
+    closePanel();
+  };
+
+  const startEdit = async (survey) => {
+    setError('');
+    setSuccess('');
+    closePanel();
+    try {
+      const res = await api.get(`/smipay/surveys/${survey._id}`, {
+        params: companyParams,
+      });
+      setEditingId(survey._id);
+      setForm(surveyToForm(res.data));
+      setShowForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not load survey for editing');
+    }
   };
 
   const onSubmit = async (e) => {
@@ -144,6 +174,7 @@ const AdminSurveys = () => {
         .map((t) => t.trim())
         .filter(Boolean),
       questions: form.questions.map((q) => ({
+        ...(q.id ? { id: q.id } : {}),
         type: q.type,
         label: q.label.trim(),
         required: q.required,
@@ -158,12 +189,23 @@ const AdminSurveys = () => {
     };
 
     try {
-      await api.post('/smipay/surveys', { ...payload, company: companySlug });
-      setSuccess('Survey created — copy the link to share it');
+      if (editingId) {
+        await api.put(`/smipay/surveys/${editingId}`, {
+          ...payload,
+          company: companySlug,
+        });
+        setSuccess('Survey updated');
+      } else {
+        await api.post('/smipay/surveys', { ...payload, company: companySlug });
+        setSuccess('Survey created — copy the link to share it');
+      }
       resetForm();
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not create survey');
+      setError(
+        err.response?.data?.message ||
+          (editingId ? 'Could not update survey' : 'Could not create survey')
+      );
     } finally {
       setSaving(false);
     }
@@ -272,10 +314,7 @@ const AdminSurveys = () => {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => {
-            setShowForm(true);
-            setSuccess('');
-          }}
+          onClick={startCreate}
         >
           <Plus size={16} />
           Add survey
@@ -309,7 +348,7 @@ const AdminSurveys = () => {
       {showForm && (
         <section className="panel survey-form-panel">
           <div className="panel-head">
-            <h2>New survey</h2>
+            <h2>{editingId ? 'Edit survey' : 'New survey'}</h2>
             <button type="button" className="btn btn-ghost" onClick={resetForm}>
               Cancel
             </button>
@@ -375,7 +414,7 @@ const AdminSurveys = () => {
               </div>
 
               {form.questions.map((q, index) => (
-                <div key={index} className="survey-question-edit">
+                <div key={q.id || `new-${index}`} className="survey-question-edit">
                   <div className="survey-question-edit-head">
                     <span>Question {index + 1}</span>
                     {form.questions.length > 1 && (
@@ -469,11 +508,25 @@ const AdminSurveys = () => {
 
             <div className="row-actions">
               <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={addQuestion}
+              >
+                <Plus size={14} />
+                Add question
+              </button>
+              <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={saving}
               >
-                {saving ? 'Creating…' : 'Create survey'}
+                {saving
+                  ? editingId
+                    ? 'Saving…'
+                    : 'Creating…'
+                  : editingId
+                    ? 'Save changes'
+                    : 'Create survey'}
               </button>
             </div>
           </form>
@@ -583,6 +636,14 @@ const AdminSurveys = () => {
                 <button
                   type="button"
                   className="btn btn-ghost"
+                  onClick={() => startEdit(survey)}
+                >
+                  <Pencil size={14} />
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
                   onClick={() => openPanel('responses', survey)}
                 >
                   <MessageSquareText size={14} />
@@ -680,6 +741,16 @@ const AdminSurveys = () => {
 
             {!panelLoading && panel.mode === 'view' && panelData && (
               <div className="survey-view-list">
+                <div className="row-actions" style={{ marginBottom: '0.75rem' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => startEdit(panel.survey)}
+                  >
+                    <Pencil size={14} />
+                    Edit survey
+                  </button>
+                </div>
                 <p className="survey-card-desc">
                   {panelData.description || 'No description'}
                 </p>
