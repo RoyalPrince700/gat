@@ -170,6 +170,7 @@ const AppLayout = () => {
       ? [
           { to: '/dashboard/customers', label: 'Customers', icon: ContactRound },
           { to: '/dashboard/social-media', label: 'Social media', icon: Share2 },
+          { to: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
         ]
       : []),
     ...(isSmehUser

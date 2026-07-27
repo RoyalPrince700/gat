@@ -11,6 +11,7 @@ import UserRecords from './pages/UserRecords';
 import UserCustomers from './pages/UserCustomers';
 import UserSchools from './pages/UserSchools';
 import UserSocialMedia from './pages/UserSocialMedia';
+import UserAnalytics from './pages/UserAnalytics';
 import AdminHub from './pages/AdminHub';
 import AdminOverview from './pages/AdminOverview';
 import AdminDashboard from './pages/AdminDashboard';
@@ -67,6 +68,7 @@ function App() {
         <Route path="/dashboard/customers" element={<UserCustomers />} />
         <Route path="/dashboard/schools" element={<UserSchools />} />
         <Route path="/dashboard/social-media" element={<UserSocialMedia />} />
+        <Route path="/dashboard/analytics" element={<UserAnalytics />} />
         <Route path="/dashboard/records" element={<UserRecords />} />
       </Route>
 

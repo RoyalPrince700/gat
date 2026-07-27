@@ -25,6 +25,7 @@ const {
   PAYMENT_METHOD_VALUES,
   GEO_STATES,
 } = require('../utils/smipayGrowthMeta');
+const { resolveRange } = require('../utils/smipayDeepAnalytics');
 
 const router = express.Router();
 
@@ -38,6 +39,14 @@ const getSmipayCompany = async () => Company.findOne({ slug: 'smipay' });
 const canAccess = (user) => {
   if (user.role === 'admin') return true;
   return user.company && user.company.slug === 'smipay';
+};
+
+const localYmd = (d) => {
+  const x = d instanceof Date ? d : new Date(d);
+  const y = x.getFullYear();
+  const m = String(x.getMonth() + 1).padStart(2, '0');
+  const day = String(x.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
 
 const resolveNetworkFields = ({
@@ -119,6 +128,68 @@ router.get('/meta/growth', protect, async (req, res) => {
     paymentMethods: PAYMENT_METHODS,
     geoStates: GEO_STATES,
   });
+});
+
+/** Same record universe as GET /api/smipay — date-filtered, not createdBy-scoped. */
+router.get('/analytics', protect, async (req, res) => {
+  try {
+    if (!canAccess(req.user)) {
+      return res.status(403).json({ message: 'No access to Smipay data' });
+    }
+
+    // Same local startOfDay / endOfDay bounds as admin deep analytics / transactions
+    const range = resolveRange(req.query.from, req.query.to);
+    const filter = {
+      date: { $gte: range.from, $lte: range.to },
+    };
+
+    const records = await SmipayRecord.find(filter).sort({ date: 1 });
+
+    const byDateMap = {};
+    const byCategoryMap = {};
+    let totalVolume = 0;
+    let totalTransactions = 0;
+    let successfulCount = 0;
+    let pendingCount = 0;
+
+    records.forEach((r) => {
+      const volume = Number(r.totalAmount) || 0;
+      const count = Number(r.transactionCount) || 0;
+      const key = localYmd(r.date);
+
+      if (!byDateMap[key]) {
+        byDateMap[key] = { date: key, volume: 0, count: 0 };
+      }
+      byDateMap[key].volume += volume;
+      byDateMap[key].count += count;
+
+      const cat = r.category === 'betting' ? 'other' : r.category || 'other';
+      if (!byCategoryMap[cat]) {
+        byCategoryMap[cat] = { category: cat, volume: 0, count: 0 };
+      }
+      byCategoryMap[cat].volume += volume;
+      byCategoryMap[cat].count += count;
+
+      totalVolume += volume;
+      totalTransactions += count;
+
+      if (r.status === 'pending') pendingCount += count;
+      else successfulCount += count;
+    });
+
+    res.json({
+      summary: {
+        totalVolume,
+        totalTransactions,
+        successfulCount,
+        pendingCount,
+      },
+      byCategory: Object.values(byCategoryMap).sort((a, b) => b.volume - a.volume),
+      trend: Object.values(byDateMap),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.get('/', protect, async (req, res) => {
