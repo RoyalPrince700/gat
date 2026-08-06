@@ -1,10 +1,33 @@
 const express = require('express');
 const SmipayRecord = require('../models/SmipayRecord');
+const SmipayDailyTotal = require('../models/SmipayDailyTotal');
+const Company = require('../models/Company');
 const { protect, adminOnly } = require('../middleware/auth');
 const { buildDeepAnalytics } = require('../utils/smipayDeepAnalytics');
 const { buildSmehGrowth } = require('../utils/smehAnalytics');
+const {
+  SMIPAY_CATEGORIES,
+  SMIPAY_CATEGORY_VALUES,
+} = require('../utils/smipayCategories');
 
 const router = express.Router();
+
+const SUMMARY_VOLUME_KEYS = {
+  deposit: 'depositVolume',
+  airtime: 'airtimeVolume',
+  data: 'dataVolume',
+  electricity: 'electricityVolume',
+  cable_tv: 'cableTvVolume',
+  exam_body: 'examBodyVolume',
+  transfer: 'transferVolume',
+  other: 'otherVolume',
+};
+
+const toDayStart = (value) => {
+  const d = new Date(value);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
 
 router.get('/smipay/deep', protect, adminOnly, async (req, res) => {
   try {
@@ -13,6 +36,92 @@ router.get('/smipay/deep', protect, adminOnly, async (req, res) => {
       to: req.query.to,
     });
     res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/**
+ * Admin Total analytics — SmipayDailyTotal only (not merged with SmipayRecord).
+ * GET /api/analytics/smipay/daily-totals?from=&to=
+ */
+router.get('/smipay/daily-totals', protect, adminOnly, async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    const company = await Company.findOne({ slug: 'smipay' });
+    const filter = company ? { company: company._id } : {};
+
+    if (from || to) {
+      filter.date = {};
+      if (from) filter.date.$gte = toDayStart(from);
+      if (to) {
+        const end = toDayStart(to);
+        end.setHours(23, 59, 59, 999);
+        filter.date.$lte = end;
+      }
+    }
+
+    const entries = await SmipayDailyTotal.find(filter)
+      .populate('createdBy', 'name email')
+      .sort({ date: 1 });
+
+    const summary = {
+      totalVolume: 0,
+      totalTransactions: 0,
+      dayCount: entries.length,
+    };
+    SMIPAY_CATEGORY_VALUES.forEach((key) => {
+      summary[SUMMARY_VOLUME_KEYS[key]] = 0;
+    });
+
+    const byCategoryMap = {};
+    SMIPAY_CATEGORY_VALUES.forEach((key) => {
+      byCategoryMap[key] = {
+        category: key,
+        volume: 0,
+        count: 0,
+      };
+    });
+
+    const trend = [];
+
+    entries.forEach((row) => {
+      const dateKey = row.date.toISOString().slice(0, 10);
+      let dayVolume = 0;
+      let dayCount = 0;
+
+      SMIPAY_CATEGORY_VALUES.forEach((key) => {
+        const cat = (row.categories && row.categories[key]) || {};
+        const volume = Number(cat.volume) || 0;
+        const count = Number(cat.count) || 0;
+        byCategoryMap[key].volume += volume;
+        byCategoryMap[key].count += count;
+        summary[SUMMARY_VOLUME_KEYS[key]] += volume;
+        dayVolume += volume;
+        dayCount += count;
+      });
+
+      summary.totalVolume += dayVolume;
+      summary.totalTransactions += dayCount;
+
+      trend.push({
+        date: dateKey,
+        volume: dayVolume,
+        count: dayCount,
+      });
+    });
+
+    res.json({
+      company: 'smipay',
+      source: 'daily_totals',
+      summary,
+      byCategory: Object.values(byCategoryMap)
+        .filter((row) => row.volume > 0 || row.count > 0)
+        .sort((a, b) => b.volume - a.volume),
+      categories: SMIPAY_CATEGORIES,
+      trend,
+      entries,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -11,10 +11,12 @@ import UserRecords from './pages/UserRecords';
 import UserCustomers from './pages/UserCustomers';
 import UserSchools from './pages/UserSchools';
 import UserSocialMedia from './pages/UserSocialMedia';
+import UserDailyTotals from './pages/UserDailyTotals';
 import UserAnalytics from './pages/UserAnalytics';
 import AdminHub from './pages/AdminHub';
 import AdminOverview from './pages/AdminOverview';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminTotalAnalytics from './pages/AdminTotalAnalytics';
 import AdminCustomers from './pages/AdminCustomers';
 import AdminTransactions from './pages/AdminTransactions';
 import AdminSchools from './pages/AdminSchools';
@@ -68,6 +70,7 @@ function App() {
         <Route path="/dashboard/customers" element={<UserCustomers />} />
         <Route path="/dashboard/schools" element={<UserSchools />} />
         <Route path="/dashboard/social-media" element={<UserSocialMedia />} />
+        <Route path="/dashboard/daily-totals" element={<UserDailyTotals />} />
         <Route path="/dashboard/analytics" element={<UserAnalytics />} />
         <Route path="/dashboard/records" element={<UserRecords />} />
       </Route>
@@ -109,6 +112,10 @@ function App() {
           element={<LegacyAdminRedirect page="costs" />}
         />
         <Route
+          path="/admin/total-analytics"
+          element={<LegacyAdminRedirect page="total-analytics" />}
+        />
+        <Route
           path="/admin/surveys"
           element={<LegacyAdminRedirect page="surveys" />}
         />
@@ -117,6 +124,14 @@ function App() {
           <Route index element={<Navigate to="overview" replace />} />
           <Route path="overview" element={<AdminOverview />} />
           <Route path="analytics" element={<AdminDashboard />} />
+          <Route
+            path="total-analytics"
+            element={
+              <SmipayOnlyRoute>
+                <AdminTotalAnalytics />
+              </SmipayOnlyRoute>
+            }
+          />
           <Route
             path="customers"
             element={

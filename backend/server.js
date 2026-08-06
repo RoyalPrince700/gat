@@ -16,6 +16,7 @@ const socialMediaRoutes = require('./routes/socialMedia');
 const smipayKpiRoutes = require('./routes/smipayKpi');
 const smipayCostRoutes = require('./routes/smipayCosts');
 const smipaySurveyRoutes = require('./routes/smipaySurveys');
+const smipayDailyTotalRoutes = require('./routes/smipayDailyTotals');
 const smehRoutes = require('./routes/smeh');
 const smehSchoolRoutes = require('./routes/smehSchools');
 const analyticsRoutes = require('./routes/analytics');
@@ -50,6 +51,7 @@ const start = async () => {
   app.use('/api/smipay/kpi', smipayKpiRoutes);
   app.use('/api/smipay/costs', smipayCostRoutes);
   app.use('/api/smipay/surveys', smipaySurveyRoutes);
+  app.use('/api/smipay/daily-totals', smipayDailyTotalRoutes);
   app.use('/api/smipay', smipayRoutes);
   app.use('/api/social-media', socialMediaRoutes);
   app.use('/api/smeh/schools', smehSchoolRoutes);

@@ -108,6 +108,7 @@ export const remapAdminPath = (pathname, nextCompanySlug) => {
     'social-media',
     'kpi',
     'costs',
+    'total-analytics',
   ];
   const smehOnly = ['subscriptions', 'schools'];
   const nextSlug = pathToCompanySlug(nextPath);

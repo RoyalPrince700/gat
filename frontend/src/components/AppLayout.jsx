@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BarChart3,
   Building2,
+  CalendarRange,
   ChevronLeft,
   ChevronRight,
   ClipboardList,
@@ -104,6 +105,11 @@ const AppLayout = () => {
         ...(showAdminSmipay
           ? [
               {
+                to: `/admin/${companyBase}/total-analytics`,
+                label: 'Total analytics',
+                icon: CalendarRange,
+              },
+              {
                 to: `/admin/${companyBase}/transactions`,
                 label: 'Transactions',
                 icon: Receipt,
@@ -170,6 +176,11 @@ const AppLayout = () => {
       ? [
           { to: '/dashboard/customers', label: 'Customers', icon: ContactRound },
           { to: '/dashboard/social-media', label: 'Social media', icon: Share2 },
+          {
+            to: '/dashboard/daily-totals',
+            label: 'Daily totals',
+            icon: CalendarRange,
+          },
           { to: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
         ]
       : []),
