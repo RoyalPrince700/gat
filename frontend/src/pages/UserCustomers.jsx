@@ -109,7 +109,7 @@ const UserCustomers = () => {
         </div>
       </div>
 
-      <div className="grid-2">
+      <div className="page-stack">
         <section className="panel">
           <h2>{editingId ? 'Edit customer' : 'Add customer'}</h2>
           <form className="form-grid" onSubmit={onSubmit}>

@@ -105,7 +105,7 @@ const AdminSchools = () => {
 
       {error && <p className="error">{error}</p>}
 
-      <div className="grid-2">
+      <div className="page-stack">
         <section className="panel">
           <h2>All schools</h2>
           {loading ? (

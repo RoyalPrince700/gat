@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { homePathForUser, useAuth } from '../context/AuthContext';
 
 const PendingApprovalPage = () => {
   const { user, loading, logout, refreshUser } = useAuth();
@@ -25,12 +25,7 @@ const PendingApprovalPage = () => {
   }
 
   if (user.status !== 'pending') {
-    return (
-      <Navigate
-        to={user.role === 'admin' ? '/admin' : '/dashboard'}
-        replace
-      />
-    );
+    return <Navigate to={homePathForUser(user)} replace />;
   }
 
   return (

@@ -1,16 +1,19 @@
 import { useEffect } from 'react';
-import { Navigate, Outlet, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import {
   applyThemeToDocument,
+  hubRootFromPathname,
   pathToCompanySlug,
 } from '../constants/themes';
 import { useCompany } from '../context/CompanyContext';
 
 /**
- * Syncs /admin/:companySlug/* with CompanyContext and document theme.
+ * Syncs /admin|md/:companySlug/* with CompanyContext and document theme.
  */
 const CompanyRouteSync = () => {
   const { companySlug: pathSlug } = useParams();
+  const location = useLocation();
+  const hubRoot = hubRootFromPathname(location.pathname);
   const { companies, switchCompany, loadingCompanies } = useCompany();
   const companySlug = pathToCompanySlug(pathSlug);
 
@@ -23,7 +26,7 @@ const CompanyRouteSync = () => {
   }, [companySlug, companies, switchCompany]);
 
   if (!companySlug) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={hubRoot} replace />;
   }
 
   if (loadingCompanies && !companies.length) {
@@ -37,7 +40,7 @@ const CompanyRouteSync = () => {
   if (companies.length) {
     const found = companies.find((c) => c.slug === companySlug);
     if (!found) {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to={hubRoot} replace />;
     }
   }
 

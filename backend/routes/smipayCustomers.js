@@ -2,7 +2,7 @@ const express = require('express');
 const SmipayCustomer = require('../models/SmipayCustomer');
 const SmipayRecord = require('../models/SmipayRecord');
 const Company = require('../models/Company');
-const { protect } = require('../middleware/auth');
+const { protect, isMdOrAdmin } = require('../middleware/auth');
 const {
   buildCustomerAnalysis,
   classifyBehavior,
@@ -18,7 +18,7 @@ const router = express.Router();
 const getSmipayCompany = async () => Company.findOne({ slug: 'smipay' });
 
 const canAccess = (user) => {
-  if (user.role === 'admin') return true;
+  if (isMdOrAdmin(user)) return true;
   return user.company && user.company.slug === 'smipay';
 };
 

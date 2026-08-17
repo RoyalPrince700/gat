@@ -2,7 +2,7 @@ const express = require('express');
 const SmipayRecord = require('../models/SmipayRecord');
 const SmipayDailyTotal = require('../models/SmipayDailyTotal');
 const Company = require('../models/Company');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, mdOrAdmin } = require('../middleware/auth');
 const { buildDeepAnalytics } = require('../utils/smipayDeepAnalytics');
 const { buildSmehGrowth } = require('../utils/smehAnalytics');
 const {
@@ -29,7 +29,7 @@ const toDayStart = (value) => {
   return d;
 };
 
-router.get('/smipay/deep', protect, adminOnly, async (req, res) => {
+router.get('/smipay/deep', protect, mdOrAdmin, async (req, res) => {
   try {
     const data = await buildDeepAnalytics({
       from: req.query.from,
@@ -45,7 +45,7 @@ router.get('/smipay/deep', protect, adminOnly, async (req, res) => {
  * Admin Total analytics — SmipayDailyTotal only (not merged with SmipayRecord).
  * GET /api/analytics/smipay/daily-totals?from=&to=
  */
-router.get('/smipay/daily-totals', protect, adminOnly, async (req, res) => {
+router.get('/smipay/daily-totals', protect, mdOrAdmin, async (req, res) => {
   try {
     const { from, to } = req.query;
     const company = await Company.findOne({ slug: 'smipay' });
@@ -135,7 +135,7 @@ const dateFilter = (from, to) => {
   return { date };
 };
 
-router.get('/all', protect, adminOnly, async (req, res) => {
+router.get('/all', protect, mdOrAdmin, async (req, res) => {
   try {
     const filter = dateFilter(req.query.from, req.query.to);
     const [smipayRecords, smehGrowth] = await Promise.all([
@@ -253,7 +253,7 @@ router.get('/all', protect, adminOnly, async (req, res) => {
   }
 });
 
-router.get('/smipay', protect, adminOnly, async (req, res) => {
+router.get('/smipay', protect, mdOrAdmin, async (req, res) => {
   try {
     const filter = dateFilter(req.query.from, req.query.to);
     const [records, customerCount] = await Promise.all([
@@ -326,7 +326,7 @@ router.get('/smipay', protect, adminOnly, async (req, res) => {
   }
 });
 
-router.get('/smart-edu-hub', protect, adminOnly, async (req, res) => {
+router.get('/smart-edu-hub', protect, mdOrAdmin, async (req, res) => {
   try {
     const growth = await buildSmehGrowth({
       from: req.query.from,

@@ -2,14 +2,14 @@ const express = require('express');
 const SmehSchool = require('../models/SmehSchool');
 const SmehSubscription = require('../models/SmehSubscription');
 const Company = require('../models/Company');
-const { protect } = require('../middleware/auth');
+const { protect, isMdOrAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
 const getSmehCompany = async () => Company.findOne({ slug: 'smart-edu-hub' });
 
 const canAccess = (user) => {
-  if (user.role === 'admin') return true;
+  if (isMdOrAdmin(user)) return true;
   return user.company && user.company.slug === 'smart-edu-hub';
 };
 

@@ -70,6 +70,94 @@
   --shadow-soft: 0 2px 12px rgba(124, 58, 237, 0.1);
 }
 
+[data-theme='best-technology-it'] {
+  /* Best Technology IT — darker lime for readable buttons / links */
+  --bg: #f4f7ef;
+  --bg-elevated: #ffffff;
+  --bg-soft: #f8fbf3;
+  --ink: #1a1a1a;
+  --muted: #4a5f66;
+  --accent: #689f38;
+  --accent-hover: #558b2f;
+  --accent-soft: #e8f5d9;
+  --brand-green: #689f38;
+  --link: #558b2f;
+  --danger: #c2410c;
+  --danger-soft: #fff2eb;
+  --success: #33691e;
+  --success-soft: #e8f5d9;
+  --line: rgba(104, 159, 56, 0.16);
+  --line-strong: rgba(26, 26, 26, 0.12);
+  --shadow: 0 1px 2px rgba(104, 159, 56, 0.06), 0 8px 24px rgba(26, 26, 26, 0.05);
+  --shadow-soft: 0 2px 12px rgba(104, 159, 56, 0.12);
+}
+
+[data-theme='oxygen-fm'] {
+  /* Oxygen FM — broadcast blue from logo O₂ mark */
+  --bg: #f3f7fc;
+  --bg-elevated: #ffffff;
+  --bg-soft: #f7fafd;
+  --ink: #0a2540;
+  --muted: #5c6b7a;
+  --accent: #1565c0;
+  --accent-hover: #0d47a1;
+  --accent-soft: #e3f0fc;
+  --brand-green: #1565c0;
+  --link: #0d47a1;
+  --danger: #c2410c;
+  --danger-soft: #fff2eb;
+  --success: #0d7377;
+  --success-soft: #e6f4f4;
+  --line: rgba(21, 101, 192, 0.14);
+  --line-strong: rgba(10, 37, 64, 0.12);
+  --shadow: 0 1px 2px rgba(21, 101, 192, 0.06), 0 8px 24px rgba(10, 37, 64, 0.05);
+  --shadow-soft: 0 2px 12px rgba(21, 101, 192, 0.12);
+}
+
+[data-theme='trifone'] {
+  /* Trifone — brand green #14562C */
+  --bg: #f3f7f4;
+  --bg-elevated: #ffffff;
+  --bg-soft: #f7faf8;
+  --ink: #0a2e18;
+  --muted: #4a6656;
+  --accent: #14562c;
+  --accent-hover: #0f4423;
+  --accent-soft: #e6f0ea;
+  --brand-green: #14562c;
+  --link: #0f4423;
+  --danger: #c2410c;
+  --danger-soft: #fff2eb;
+  --success: #14562c;
+  --success-soft: #e6f0ea;
+  --line: rgba(20, 86, 44, 0.14);
+  --line-strong: rgba(10, 46, 24, 0.12);
+  --shadow: 0 1px 2px rgba(20, 86, 44, 0.06), 0 8px 24px rgba(10, 46, 24, 0.05);
+  --shadow-soft: 0 2px 12px rgba(20, 86, 44, 0.12);
+}
+
+[data-theme='best-in-print'] {
+  /* Best In Print — ink crimson for print production brand */
+  --bg: #faf6f7;
+  --bg-elevated: #ffffff;
+  --bg-soft: #fdf9fa;
+  --ink: #2a1418;
+  --muted: #6b4f57;
+  --accent: #9b1b30;
+  --accent-hover: #7a1526;
+  --accent-soft: #f8e8eb;
+  --brand-green: #9b1b30;
+  --link: #7a1526;
+  --danger: #c2410c;
+  --danger-soft: #fff2eb;
+  --success: #2e7d32;
+  --success-soft: #e8f5e9;
+  --line: rgba(155, 27, 48, 0.14);
+  --line-strong: rgba(42, 20, 24, 0.12);
+  --shadow: 0 1px 2px rgba(155, 27, 48, 0.06), 0 8px 24px rgba(42, 20, 24, 0.05);
+  --shadow-soft: 0 2px 12px rgba(155, 27, 48, 0.12);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -397,6 +485,28 @@ a {
   color: var(--success);
 }
 
+.badge-booked,
+.badge-running {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.badge-lead,
+.badge-proposal {
+  background: #fff4e5;
+  color: #c05600;
+}
+
+.badge-completed {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.badge-cancelled {
+  background: #fdecee;
+  color: var(--danger);
+}
+
 .badge-inactive {
   background: #f3f4f6;
   color: #4b5563;
@@ -452,8 +562,10 @@ a {
 }
 
 .stack-actions {
-  flex-direction: column;
-  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
 }
 
 .activity-block + .activity-block {
@@ -609,6 +721,34 @@ tr.row-selected td {
   width: min(1480px, calc(100% - 2.5rem));
 }
 
+/* Dashboard tools: fill the main content column (sidebar-adjacent area) */
+.page-full {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  box-sizing: border-box;
+}
+
+.page-full .page-header {
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.page-full .page-header-actions,
+.page-full .panel-head .stack-actions {
+  flex-shrink: 0;
+}
+
+.page-full .panel-head {
+  flex-wrap: nowrap;
+}
+
+.page-full .form-grid {
+  width: 100%;
+}
+
 .customers-layout {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.65fr);
@@ -715,6 +855,18 @@ tr.row-selected td {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: 1.25rem;
+}
+
+/* Stack form + list panels full width (manage / CRUD pages) */
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-stack > .panel {
+  width: 100%;
+  min-width: 0;
 }
 
 .panel {
@@ -1100,6 +1252,44 @@ th {
 .login-card form {
   display: grid;
   gap: 0.95rem;
+}
+
+.password-field {
+  position: relative;
+  display: block;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 2.75rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted, #6e6e73);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--ink, #1d1d1f);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--accent, #f26522);
+  outline-offset: 1px;
 }
 
 .error {
@@ -1551,6 +1741,16 @@ th {
     width: min(1480px, calc(100% - 1.5rem));
   }
 
+  .page-full {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .page-full .page-header,
+  .page-full .panel-head {
+    flex-wrap: wrap;
+  }
+
   .topbar {
     align-items: flex-start;
     flex-direction: column;
@@ -1559,25 +1759,23 @@ th {
   .page {
     width: min(1120px, calc(100% - 1.5rem));
   }
-
-  .company-hub-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
-/* Admin company hub */
+/* Admin company hub — compact picker: 3 / 2 / 1 columns */
 .company-hub-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
 }
 
 .company-hub-card {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  padding: 1.5rem 1.4rem;
+  align-items: center;
+  text-align: center;
+  gap: 0.55rem;
+  padding: 1.05rem 0.9rem 0.95rem;
   border-radius: var(--radius);
   border: 1px solid var(--line);
   background: var(--bg-elevated);
@@ -1597,7 +1795,7 @@ th {
 .company-hub-card-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.75rem;
 }
 
@@ -1605,42 +1803,73 @@ th {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--card-accent, var(--accent)) 14%, white);
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card-accent, var(--accent)) 12%, #fff);
   color: var(--card-accent, var(--accent));
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, var(--card-accent, var(--accent)));
+}
+
+.company-hub-mark.has-logo {
+  padding: 0.35rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 40%, transparent);
+}
+
+.company-hub-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .company-hub-card h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.35rem;
-  letter-spacing: -0.03em;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  max-width: 100%;
 }
 
-.company-hub-card p {
-  margin: 0;
+.company-hub-perf {
+  margin: 0.35rem 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.45;
-}
-
-.company-hub-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: auto;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .company-hub-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-top: 0.25rem;
+  gap: 0.3rem;
+  margin-top: auto;
   color: var(--card-accent, var(--accent));
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 1100px) {
+  .company-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .company-hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .company-hub-mark {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
 }
 
 .global-admin-links {
@@ -2126,5 +2355,10 @@ th {
 
   .survey-drawer {
     width: 100%;
+  }
+
+  .page-full .page-header,
+  .page-full .panel-head {
+    flex-wrap: wrap;
   }
 }

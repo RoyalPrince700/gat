@@ -213,7 +213,7 @@ const AdminKpi = () => {
         </div>
       )}
 
-      <div className="grid-2">
+      <div className="page-stack">
         <section className="panel">
           <div className="panel-head">
             <h2>{editingId ? 'Edit KPI' : 'Add KPI'}</h2>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Bar,
   BarChart,
@@ -11,12 +11,25 @@ import {
 } from 'recharts';
 import api from '../api/client';
 import { categoryLabel } from '../constants/smipay';
-import { adminCompanyPath, getThemeForSlug } from '../constants/themes';
+import { BESTTECH_SLUG, serviceLineLabel } from '../constants/besttech';
+import { BEST_IN_PRINT_SLUG, printTypeLabel } from '../constants/bestinprint';
+import { OXYGEN_SLUG, bookingTypeLabel } from '../constants/oxygen';
+import {
+  TRIFONE_SLUG,
+  productCategoryLabel,
+  saleChannelLabel,
+} from '../constants/trifone';
+import {
+  adminCompanyPath,
+  getThemeForSlug,
+  hubRootFromPathname,
+} from '../constants/themes';
 import { useCompany } from '../context/CompanyContext';
 import { formatDate, formatDateTime, formatMoney, formatNumber } from '../utils/format';
 
 const AdminOverview = () => {
   const { activeCompany } = useCompany();
+  const hubRoot = hubRootFromPathname(useLocation().pathname);
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -25,6 +38,10 @@ const AdminOverview = () => {
   const theme = getThemeForSlug(slug);
   const showSmipay = slug === 'smipay';
   const showEdu = slug === 'smart-edu-hub';
+  const showBestTech = slug === BESTTECH_SLUG;
+  const showBestInPrint = slug === BEST_IN_PRINT_SLUG;
+  const showOxygen = slug === OXYGEN_SLUG;
+  const showTrifone = slug === TRIFONE_SLUG;
 
   useEffect(() => {
     if (!slug || slug === 'all') return;
@@ -79,27 +96,43 @@ const AdminOverview = () => {
   }
 
   const s = data.summary;
+  const path = (page) => adminCompanyPath(slug, page, hubRoot);
 
   return (
     <div className="page">
-      <Link to="/admin" className="back-to-hub">
+      <Link to={hubRoot} className="back-to-hub">
         ← All companies
       </Link>
       <div className="page-header">
         <div>
-          <h1>{activeCompany.name} overview</h1>
+          <h1>
+            {activeCompany.name} overview
+            {hubRoot === '/md' ? (
+              <span className="badge" style={{ marginLeft: '0.5rem', verticalAlign: 'middle' }}>
+                Executive view
+              </span>
+            ) : null}
+          </h1>
           <p>
             {slug === 'smipay'
               ? 'Growth view of Smipay customers, volume, and transaction categories from team-entered data.'
               : slug === 'smart-edu-hub'
                 ? 'LMS schools aware vs subscribed, subscription revenue, onboarding, and renewals ending soon.'
-                : `Metrics and recent activity for ${activeCompany.name}.`}
+                : slug === BESTTECH_SLUG
+                  ? 'Enterprise clients, project engagements, and pipeline value by service line.'
+                  : slug === BEST_IN_PRINT_SLUG
+                    ? 'Print clients, book and flier jobs, and pipeline value by print type.'
+                    : slug === OXYGEN_SLUG
+                      ? 'Advertisers, airtime bookings, and commercial pipeline by booking type.'
+                      : slug === TRIFONE_SLUG
+                        ? 'Customers, product sales revenue, and mix by category and channel.'
+                        : `Metrics and recent activity for ${activeCompany.name}.`}
           </p>
         </div>
         <div className="row-actions">
           {showSmipay && (
             <Link
-              to={adminCompanyPath(slug, 'customers')}
+              to={path('customers')}
               className="btn btn-ghost"
             >
               Customers
@@ -108,25 +141,91 @@ const AdminOverview = () => {
           {showEdu && (
             <>
               <Link
-                to={adminCompanyPath(slug, 'schools')}
+                to={path('schools')}
                 className="btn btn-ghost"
               >
                 Schools
               </Link>
               <Link
-                to={adminCompanyPath(slug, 'subscriptions')}
+                to={path('subscriptions')}
                 className="btn btn-ghost"
               >
                 Subscriptions
               </Link>
             </>
           )}
-          <Link
-            to={adminCompanyPath(slug, 'analytics')}
-            className="btn btn-primary"
-          >
-            Open analytics
-          </Link>
+          {showBestTech && (
+            <>
+              <Link
+                to={path('clients')}
+                className="btn btn-ghost"
+              >
+                Clients
+              </Link>
+              <Link
+                to={path('projects')}
+                className="btn btn-primary"
+              >
+                Projects
+              </Link>
+            </>
+          )}
+          {showBestInPrint && (
+            <>
+              <Link
+                to={path('clients')}
+                className="btn btn-ghost"
+              >
+                Clients
+              </Link>
+              <Link
+                to={path('jobs')}
+                className="btn btn-primary"
+              >
+                Jobs
+              </Link>
+            </>
+          )}
+          {showOxygen && (
+            <>
+              <Link
+                to={path('advertisers')}
+                className="btn btn-ghost"
+              >
+                Advertisers
+              </Link>
+              <Link
+                to={path('bookings')}
+                className="btn btn-primary"
+              >
+                Bookings
+              </Link>
+            </>
+          )}
+          {showTrifone && (
+            <>
+              <Link
+                to={path('customers')}
+                className="btn btn-ghost"
+              >
+                Customers
+              </Link>
+              <Link
+                to={path('sales')}
+                className="btn btn-primary"
+              >
+                Sales
+              </Link>
+            </>
+          )}
+          {!showBestTech && !showBestInPrint && !showOxygen && !showTrifone && (
+            <Link
+              to={path('analytics')}
+              className="btn btn-primary"
+            >
+              Open analytics
+            </Link>
+          )}
         </div>
       </div>
 
@@ -289,6 +388,228 @@ const AdminOverview = () => {
         </>
       )}
 
+      {showBestTech && (
+        <>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Clients</div>
+              <div className="stat-value">
+                {formatNumber(s.besttechClients)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">New clients (30d)</div>
+              <div className="stat-value">
+                {formatNumber(s.besttechNewClients30d)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Projects</div>
+              <div className="stat-value">
+                {formatNumber(s.besttechProjects)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Pipeline value</div>
+              <div className="stat-value">
+                {formatMoney(s.besttechPipelineValue)}
+              </div>
+            </div>
+          </div>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Active / proposal</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.besttechActiveProjects)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Completed</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.besttechCompletedProjects)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Amount received</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatMoney(s.besttechAmountReceived)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Team users</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.teamUserCount)}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showBestInPrint && (
+        <>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Clients</div>
+              <div className="stat-value">
+                {formatNumber(s.bestInPrintClients)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">New clients (30d)</div>
+              <div className="stat-value">
+                {formatNumber(s.bestInPrintNewClients30d)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Print jobs</div>
+              <div className="stat-value">
+                {formatNumber(s.bestInPrintJobs)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Pipeline value</div>
+              <div className="stat-value">
+                {formatMoney(s.bestInPrintPipelineValue)}
+              </div>
+            </div>
+          </div>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">In production / confirmed</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.bestInPrintInProduction)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Delivered</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.bestInPrintDelivered)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Amount received</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatMoney(s.bestInPrintAmountReceived)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Team users</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.teamUserCount)}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showOxygen && (
+        <>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Advertisers</div>
+              <div className="stat-value">
+                {formatNumber(s.oxygenAdvertisers)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">New advertisers (30d)</div>
+              <div className="stat-value">
+                {formatNumber(s.oxygenNewAdvertisers30d)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Bookings</div>
+              <div className="stat-value">
+                {formatNumber(s.oxygenBookings)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Pipeline value</div>
+              <div className="stat-value">
+                {formatMoney(s.oxygenPipelineValue)}
+              </div>
+            </div>
+          </div>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Booked / running</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.oxygenRunningOrBooked)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Completed</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.oxygenCompletedBookings)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Amount received</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatMoney(s.oxygenAmountReceived)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Team users</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.teamUserCount)}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showTrifone && (
+        <>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Customers</div>
+              <div className="stat-value">
+                {formatNumber(s.trifoneCustomers)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">New customers (30d)</div>
+              <div className="stat-value">
+                {formatNumber(s.trifoneNewCustomers30d)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Sales</div>
+              <div className="stat-value">
+                {formatNumber(s.trifoneSales)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Revenue</div>
+              <div className="stat-value">
+                {formatMoney(s.trifoneRevenue)}
+              </div>
+            </div>
+          </div>
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-label">Confirmed</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.trifoneConfirmedSales)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Delivered</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.trifoneDeliveredSales)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-label">Team users</div>
+              <div className="stat-value" style={{ fontSize: '1.15rem' }}>
+                {formatNumber(s.teamUserCount)}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="grid-2">
         {showSmipay && (
           <section className="panel">
@@ -331,6 +652,220 @@ const AdminOverview = () => {
               <p className="empty">No Smipay category data yet.</p>
             )}
           </section>
+        )}
+
+        {showBestTech && (
+          <section className="panel">
+            <h2>Contract value by service line</h2>
+            {data.byServiceLine?.length ? (
+              <div className="chart-box">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.byServiceLine}>
+                    <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                    <XAxis
+                      dataKey="serviceLine"
+                      tickFormatter={serviceLineLabel}
+                      stroke="#6e6e73"
+                      fontSize={11}
+                    />
+                    <YAxis
+                      stroke="#6e6e73"
+                      fontSize={11}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      formatter={(v) => formatMoney(v)}
+                      labelFormatter={serviceLineLabel}
+                      contentStyle={{
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: 12,
+                      }}
+                    />
+                    <Bar
+                      dataKey="contractValue"
+                      fill={theme.chartPrimary}
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="empty">No project data yet.</p>
+            )}
+          </section>
+        )}
+
+        {showBestInPrint && (
+          <section className="panel">
+            <h2>Contract value by print type</h2>
+            {data.byPrintType?.length ? (
+              <div className="chart-box">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.byPrintType}>
+                    <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                    <XAxis
+                      dataKey="printType"
+                      tickFormatter={printTypeLabel}
+                      stroke="#6e6e73"
+                      fontSize={11}
+                    />
+                    <YAxis
+                      stroke="#6e6e73"
+                      fontSize={11}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      formatter={(v) => formatMoney(v)}
+                      labelFormatter={printTypeLabel}
+                      contentStyle={{
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: 12,
+                      }}
+                    />
+                    <Bar
+                      dataKey="contractValue"
+                      fill={theme.chartPrimary}
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="empty">No print job data yet.</p>
+            )}
+          </section>
+        )}
+
+        {showOxygen && (
+          <section className="panel">
+            <h2>Contract value by booking type</h2>
+            {data.byBookingType?.length ? (
+              <div className="chart-box">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.byBookingType}>
+                    <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                    <XAxis
+                      dataKey="bookingType"
+                      tickFormatter={bookingTypeLabel}
+                      stroke="#6e6e73"
+                      fontSize={11}
+                    />
+                    <YAxis
+                      stroke="#6e6e73"
+                      fontSize={11}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      formatter={(v) => formatMoney(v)}
+                      labelFormatter={bookingTypeLabel}
+                      contentStyle={{
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: 12,
+                      }}
+                    />
+                    <Bar
+                      dataKey="contractValue"
+                      fill={theme.chartPrimary}
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="empty">No booking data yet.</p>
+            )}
+          </section>
+        )}
+
+        {showTrifone && (
+          <>
+            <section className="panel">
+              <h2>Revenue by product category</h2>
+              {data.byProductCategory?.length ? (
+                <div className="chart-box">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.byProductCategory}>
+                      <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                      <XAxis
+                        dataKey="productCategory"
+                        tickFormatter={productCategoryLabel}
+                        stroke="#6e6e73"
+                        fontSize={11}
+                      />
+                      <YAxis
+                        stroke="#6e6e73"
+                        fontSize={11}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        formatter={(v) => formatMoney(v)}
+                        labelFormatter={productCategoryLabel}
+                        contentStyle={{
+                          background: '#fff',
+                          border: '1px solid rgba(0,0,0,0.08)',
+                          borderRadius: 12,
+                        }}
+                      />
+                      <Bar
+                        dataKey="revenue"
+                        fill={theme.chartPrimary}
+                        radius={[6, 6, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="empty">No sales data yet.</p>
+              )}
+            </section>
+            <section className="panel">
+              <h2>Revenue by channel</h2>
+              {data.byChannel?.length ? (
+                <div className="chart-box">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.byChannel}>
+                      <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                      <XAxis
+                        dataKey="channel"
+                        tickFormatter={saleChannelLabel}
+                        stroke="#6e6e73"
+                        fontSize={11}
+                      />
+                      <YAxis
+                        stroke="#6e6e73"
+                        fontSize={11}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        formatter={(v) => formatMoney(v)}
+                        labelFormatter={saleChannelLabel}
+                        contentStyle={{
+                          background: '#fff',
+                          border: '1px solid rgba(0,0,0,0.08)',
+                          borderRadius: 12,
+                        }}
+                      />
+                      <Bar
+                        dataKey="revenue"
+                        fill={theme.chartSecondary || theme.chartPrimary}
+                        radius={[6, 6, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="empty">No channel data yet.</p>
+              )}
+            </section>
+          </>
         )}
 
         <section className="panel">
@@ -401,6 +936,106 @@ const AdminOverview = () => {
                 </div>
               )}
             </>
+          )}
+          {showBestTech && (
+            <div className="activity-block">
+              <h3>Recent projects</h3>
+              {(data.recentActivity.besttech || []).length === 0 ? (
+                <p className="empty">No projects yet.</p>
+              ) : (
+                <ul className="activity-list">
+                  {data.recentActivity.besttech.map((r) => (
+                    <li key={r._id}>
+                      <span>
+                        {r.title}
+                        {r.clientName ? ` · ${r.clientName}` : ''}
+                        {r.serviceLine
+                          ? ` · ${serviceLineLabel(r.serviceLine)}`
+                          : ''}
+                      </span>
+                      <span>
+                        {formatMoney(r.contractValue)} · {formatDate(r.date)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          {showBestInPrint && (
+            <div className="activity-block">
+              <h3>Recent print jobs</h3>
+              {(data.recentActivity.bestInPrint || []).length === 0 ? (
+                <p className="empty">No jobs yet.</p>
+              ) : (
+                <ul className="activity-list">
+                  {data.recentActivity.bestInPrint.map((r) => (
+                    <li key={r._id}>
+                      <span>
+                        {r.title}
+                        {r.clientName ? ` · ${r.clientName}` : ''}
+                        {r.printType
+                          ? ` · ${printTypeLabel(r.printType)}`
+                          : ''}
+                      </span>
+                      <span>
+                        {formatMoney(r.contractValue)} · {formatDate(r.date)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          {showOxygen && (
+            <div className="activity-block">
+              <h3>Recent bookings</h3>
+              {(data.recentActivity.oxygen || []).length === 0 ? (
+                <p className="empty">No bookings yet.</p>
+              ) : (
+                <ul className="activity-list">
+                  {data.recentActivity.oxygen.map((r) => (
+                    <li key={r._id}>
+                      <span>
+                        {r.title}
+                        {r.advertiserName ? ` · ${r.advertiserName}` : ''}
+                        {r.bookingType
+                          ? ` · ${bookingTypeLabel(r.bookingType)}`
+                          : ''}
+                      </span>
+                      <span>
+                        {formatMoney(r.contractValue)} · {formatDate(r.date)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          {showTrifone && (
+            <div className="activity-block">
+              <h3>Recent sales</h3>
+              {(data.recentActivity.trifone || []).length === 0 ? (
+                <p className="empty">No sales yet.</p>
+              ) : (
+                <ul className="activity-list">
+                  {data.recentActivity.trifone.map((r) => (
+                    <li key={r._id}>
+                      <span>
+                        {r.title || r.productName || productCategoryLabel(r.productCategory)}
+                        {r.customerName ? ` · ${r.customerName}` : ''}
+                        {r.productCategory
+                          ? ` · ${productCategoryLabel(r.productCategory)}`
+                          : ''}
+                      </span>
+                      <span>
+                        {formatMoney(r.totalAmount)} · {formatDate(r.date)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
         </section>
       </div>

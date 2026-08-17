@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+/** Portfolio-level roles: multi-company read (admin also has write/ops). */
+const isMdOrAdmin = (user) =>
+  Boolean(user && (user.role === 'admin' || user.role === 'md'));
+
 const protect = async (req, res, next) => {
   let token;
 
@@ -42,4 +46,20 @@ const adminOnly = (req, res, next) => {
   return res.status(403).json({ message: 'Admin access required' });
 };
 
-module.exports = { protect, adminOnly };
+/** MD or admin — portfolio overview, analytics read, multi-company data. */
+const mdOrAdmin = (req, res, next) => {
+  if (isMdOrAdmin(req.user)) {
+    return next();
+  }
+  return res.status(403).json({ message: 'MD or admin access required' });
+};
+
+/** MD only — performance interviews and scorecards. */
+const mdOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'md') {
+    return next();
+  }
+  return res.status(403).json({ message: 'MD access required' });
+};
+
+module.exports = { protect, adminOnly, mdOrAdmin, mdOnly, isMdOrAdmin };

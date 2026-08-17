@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import api from '../api/client';
 import { homePathForUser, useAuth } from '../context/AuthContext';
 
@@ -10,6 +11,7 @@ const LoginPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isFirstUser, setIsFirstUser] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -31,6 +33,7 @@ const LoginPage = () => {
     setName('');
     setEmail('');
     setPassword('');
+    setShowPassword(false);
   };
 
   const onSubmit = async (e) => {
@@ -107,14 +110,29 @@ const LoginPage = () => {
           </label>
           <label>
             Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            />
+            <div className="password-field">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={1.75} />
+                ) : (
+                  <Eye size={18} strokeWidth={1.75} />
+                )}
+              </button>
+            </div>
           </label>
 
           {error && <p className="error">{error}</p>}

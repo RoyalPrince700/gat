@@ -1,7 +1,7 @@
 const express = require('express');
 const SmipayKpi = require('../models/SmipayKpi');
 const Company = require('../models/Company');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, adminOnly, mdOrAdmin } = require('../middleware/auth');
 const {
   KPI_METRICS,
   KPI_PERIODS,
@@ -88,7 +88,7 @@ const validatePayload = (body) => {
   return { payload };
 };
 
-router.get('/meta', protect, adminOnly, (req, res) => {
+router.get('/meta', protect, mdOrAdmin, (req, res) => {
   res.json({
     metrics: KPI_METRICS,
     periods: KPI_PERIODS,
@@ -97,7 +97,7 @@ router.get('/meta', protect, adminOnly, (req, res) => {
   });
 });
 
-router.get('/', protect, adminOnly, async (req, res) => {
+router.get('/', protect, mdOrAdmin, async (req, res) => {
   try {
     const company = await getSmipayCompany();
     if (!company) {

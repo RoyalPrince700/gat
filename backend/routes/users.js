@@ -4,7 +4,10 @@ const { protect, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
 
-const ROLES = ['admin', 'user'];
+const ROLES = ['admin', 'md', 'user'];
+
+/** Admins and MDs are portfolio-level; company is optional. */
+const isElevatedRole = (role) => role === 'admin' || role === 'md';
 
 const formatUser = async (id) =>
   User.findById(id).select('-password').populate('company', 'name slug type');
@@ -58,7 +61,7 @@ router.post('/', protect, adminOnly, async (req, res) => {
       password,
       role,
       status: 'active',
-      company: role === 'admin' ? company || null : company,
+      company: isElevatedRole(role) ? company || null : company,
     });
 
     res.status(201).json(await formatUser(user._id));
@@ -107,9 +110,9 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
       }
     }
 
-    // Activating a pending user: admin role, or team member with a company.
+    // Activating a pending user: elevated role, or team member with a company.
     if (wasPending) {
-      if (nextRole === 'admin' || (nextRole === 'user' && user.company)) {
+      if (isElevatedRole(nextRole) || (nextRole === 'user' && user.company)) {
         user.status = 'active';
       }
     }

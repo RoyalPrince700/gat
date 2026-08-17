@@ -56,6 +56,7 @@ const UsersPage = () => {
       return users.filter((u) => (u.status || 'active') === 'pending');
     }
     if (filter === 'admins') return users.filter((u) => u.role === 'admin');
+    if (filter === 'md') return users.filter((u) => u.role === 'md');
     if (filter === 'team') return users.filter((u) => u.role === 'user');
     if (filter === 'company' && activeCompany && !isAllCompanies) {
       return users.filter(
@@ -69,6 +70,7 @@ const UsersPage = () => {
 
   const teamCount = users.filter((u) => u.role === 'user').length;
   const adminCount = users.filter((u) => u.role === 'admin').length;
+  const mdCount = users.filter((u) => u.role === 'md').length;
   const pendingCount = users.filter(
     (u) => (u.status || 'active') === 'pending'
   ).length;
@@ -132,7 +134,8 @@ const UsersPage = () => {
           <p>
             {users.length} people on the site — {teamCount} team member
             {teamCount === 1 ? '' : 's'}, {adminCount} admin
-            {adminCount === 1 ? '' : 's'}
+            {adminCount === 1 ? '' : 's'}, {mdCount} MD
+            {mdCount === 1 ? '' : 's'}
             {pendingCount > 0
               ? `, ${pendingCount} waiting for role assignment`
               : ''}
@@ -141,7 +144,7 @@ const UsersPage = () => {
         </div>
       </div>
 
-      <div className="grid-2">
+      <div className="page-stack">
         <section className="panel">
           <div className="panel-head">
             <h2>Add team member</h2>
@@ -186,6 +189,7 @@ const UsersPage = () => {
                 <select name="role" value={form.role} onChange={onFormChange}>
                   <option value="user">Team member</option>
                   <option value="admin">Admin</option>
+                  <option value="md">MD</option>
                 </select>
               </label>
               <label className="full">
@@ -197,7 +201,7 @@ const UsersPage = () => {
                   required={form.role === 'user'}
                 >
                   <option value="">
-                    {form.role === 'admin' ? 'Optional' : 'Select company'}
+                    {form.role === 'user' ? 'Select company' : 'Optional'}
                   </option>
                   {companies.map((c) => (
                     <option key={c._id} value={c._id}>
@@ -228,6 +232,7 @@ const UsersPage = () => {
                 </option>
                 <option value="team">Team members</option>
                 <option value="admins">Admins</option>
+                <option value="md">MDs</option>
                 {!isAllCompanies && activeCompany && (
                   <option value="company">{activeCompany.name} only</option>
                 )}
@@ -296,6 +301,7 @@ const UsersPage = () => {
                         >
                           <option value="user">Team member</option>
                           <option value="admin">Admin</option>
+                          <option value="md">MD</option>
                         </select>
                       </td>
                       <td>

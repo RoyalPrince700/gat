@@ -1,7 +1,7 @@
 const express = require('express');
 const SmipayRecord = require('../models/SmipayRecord');
 const SmehSubscription = require('../models/SmehSubscription');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, mdOrAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ const dateFilter = (from, to) => {
 
 const yesNo = (v) => (v ? 'Yes' : 'No');
 
-router.get('/all', protect, adminOnly, async (req, res) => {
+router.get('/all', protect, mdOrAdmin, async (req, res) => {
   try {
     const filter = dateFilter(req.query.from, req.query.to);
     const [smipay, smeh] = await Promise.all([
@@ -76,7 +76,7 @@ router.get('/all', protect, adminOnly, async (req, res) => {
   }
 });
 
-router.get('/smipay', protect, adminOnly, async (req, res) => {
+router.get('/smipay', protect, mdOrAdmin, async (req, res) => {
   try {
     const filter = dateFilter(req.query.from, req.query.to);
     const records = await SmipayRecord.find(filter).sort({ date: -1 });
@@ -115,7 +115,7 @@ router.get('/smipay', protect, adminOnly, async (req, res) => {
   }
 });
 
-router.get('/smart-edu-hub', protect, adminOnly, async (req, res) => {
+router.get('/smart-edu-hub', protect, mdOrAdmin, async (req, res) => {
   try {
     const filter = dateFilter(req.query.from, req.query.to);
     const records = await SmehSubscription.find(filter).sort({ date: -1 });

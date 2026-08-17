@@ -28,6 +28,16 @@ import {
   toDateTimeLocal,
 } from '../utils/format';
 import UserSmehDashboard from './UserSmehDashboard';
+import UserBesttechDashboard from './UserBesttechDashboard';
+import UserBestInPrintDashboard from './UserBestInPrintDashboard';
+import UserOxygenDashboard from './UserOxygenDashboard';
+import UserTrifoneDashboard from './UserTrifoneDashboard';
+import { BESTTECH_SLUG } from '../constants/besttech';
+import { BEST_IN_PRINT_SLUG } from '../constants/bestinprint';
+import { OXYGEN_SLUG } from '../constants/oxygen';
+import { TRIFONE_SLUG } from '../constants/trifone';
+import { ACCESSIBLE_SLUG } from '../constants/accessible';
+import { Navigate } from 'react-router-dom';
 
 const emptySmipay = () => ({
   customerMode: 'existing',
@@ -839,6 +849,21 @@ const UserDashboard = () => {
   const { activeCompany } = useCompany();
   if (activeCompany?.slug === 'smart-edu-hub') {
     return <UserSmehDashboard />;
+  }
+  if (activeCompany?.slug === BESTTECH_SLUG) {
+    return <UserBesttechDashboard />;
+  }
+  if (activeCompany?.slug === BEST_IN_PRINT_SLUG) {
+    return <UserBestInPrintDashboard />;
+  }
+  if (activeCompany?.slug === OXYGEN_SLUG) {
+    return <UserOxygenDashboard />;
+  }
+  if (activeCompany?.slug === TRIFONE_SLUG) {
+    return <UserTrifoneDashboard />;
+  }
+  if (activeCompany?.slug === ACCESSIBLE_SLUG) {
+    return <Navigate to="/dashboard/accessible-daily-totals" replace />;
   }
   return <SmipayUserDashboard />;
 };

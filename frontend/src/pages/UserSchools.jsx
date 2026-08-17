@@ -99,7 +99,7 @@ const UserSchools = () => {
         </div>
       </div>
 
-      <div className="grid-2">
+      <div className="page-stack">
         <section className="panel">
           <h2>{editingId ? 'Edit school' : 'Add school'}</h2>
           <form className="form-grid" onSubmit={onSubmit}>

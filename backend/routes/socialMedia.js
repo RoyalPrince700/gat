@@ -1,7 +1,7 @@
 const express = require('express');
 const SocialMediaRecord = require('../models/SocialMediaRecord');
 const Company = require('../models/Company');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, adminOnly, mdOrAdmin, isMdOrAdmin } = require('../middleware/auth');
 const {
   SOCIAL_MEDIA_PLATFORMS,
   SOCIAL_MEDIA_PLATFORM_VALUES,
@@ -12,7 +12,7 @@ const router = express.Router();
 const getSmipayCompany = async () => Company.findOne({ slug: 'smipay' });
 
 const canAccess = (user) => {
-  if (user.role === 'admin') return true;
+  if (isMdOrAdmin(user)) return true;
   return user.company && user.company.slug === 'smipay';
 };
 
@@ -29,7 +29,7 @@ router.get('/meta/platforms', protect, async (req, res) => {
   res.json(SOCIAL_MEDIA_PLATFORMS);
 });
 
-router.get('/analytics', protect, adminOnly, async (req, res) => {
+router.get('/analytics', protect, mdOrAdmin, async (req, res) => {
   try {
     const { from, to } = req.query;
     const filter = {};
@@ -296,7 +296,7 @@ router.put('/:id', protect, async (req, res) => {
     }
 
     if (
-      req.user.role !== 'admin' &&
+      !isMdOrAdmin(req.user) &&
       String(record.createdBy) !== String(req.user._id)
     ) {
       return res.status(403).json({ message: 'You can only edit your own entries' });
@@ -348,7 +348,7 @@ router.delete('/:id', protect, async (req, res) => {
     }
 
     if (
-      req.user.role !== 'admin' &&
+      !isMdOrAdmin(req.user) &&
       String(record.createdBy) !== String(req.user._id)
     ) {
       return res.status(403).json({ message: 'You can only delete your own entries' });

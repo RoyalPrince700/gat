@@ -1,6 +1,6 @@
 const express = require('express');
 const SmipayRecord = require('../models/SmipayRecord');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, mdOrAdmin } = require('../middleware/auth');
 const { SMIPAY_CATEGORY_VALUES } = require('../utils/smipayCategories');
 const {
   SMIPAY_NETWORK_VALUES,
@@ -379,7 +379,7 @@ const sortRecords = (records, sortBy) => {
   return list;
 };
 
-router.get('/', protect, adminOnly, async (req, res) => {
+router.get('/', protect, mdOrAdmin, async (req, res) => {
   try {
     const window = req.query.window || '30d';
     const dateField = req.query.dateField === 'date' ? 'date' : 'createdAt';

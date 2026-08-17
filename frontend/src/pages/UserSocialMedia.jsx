@@ -238,7 +238,7 @@ const UserSocialMedia = () => {
         </form>
       </section>
 
-      <div className="grid-2" style={{ marginTop: '1.25rem' }}>
+      <div className="page-stack" style={{ marginTop: '1.25rem' }}>
         <section className="panel">
           <h2>{editingId ? 'Edit entry' : 'Add single entry'}</h2>
           <form className="form-grid" onSubmit={onSingleSubmit}>

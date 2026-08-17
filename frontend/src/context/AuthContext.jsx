@@ -6,7 +6,16 @@ const AuthContext = createContext(null);
 export const homePathForUser = (user) => {
   if (!user) return '/login';
   if (user.status === 'pending') return '/pending';
-  return user.role === 'admin' ? '/admin' : '/dashboard';
+  if (user.role === 'admin') return '/admin';
+  if (user.role === 'md') return '/md';
+  return '/dashboard';
+};
+
+/** Portfolio executives (admin + MD) share multi-company hub behaviour. */
+export const isPortfolioRole = (userOrRole) => {
+  const role =
+    typeof userOrRole === 'string' ? userOrRole : userOrRole?.role;
+  return role === 'admin' || role === 'md';
 };
 
 export const AuthProvider = ({ children }) => {

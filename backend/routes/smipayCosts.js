@@ -1,7 +1,7 @@
 const express = require('express');
 const SmipayCost = require('../models/SmipayCost');
 const Company = require('../models/Company');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect, adminOnly, mdOrAdmin } = require('../middleware/auth');
 const {
   COST_CATEGORIES,
   COST_CATEGORY_VALUES,
@@ -78,11 +78,11 @@ const validatePayload = (body) => {
   };
 };
 
-router.get('/meta', protect, adminOnly, (req, res) => {
+router.get('/meta', protect, mdOrAdmin, (req, res) => {
   res.json({ categories: COST_CATEGORIES });
 });
 
-router.get('/', protect, adminOnly, async (req, res) => {
+router.get('/', protect, mdOrAdmin, async (req, res) => {
   try {
     const company = await getSmipayCompany();
     if (!company) {
