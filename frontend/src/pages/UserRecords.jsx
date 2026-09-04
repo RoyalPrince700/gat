@@ -124,7 +124,7 @@ const UserRecords = () => {
             {isSmeh
               ? 'All LMS subscription rows entered for Smart Edu Hub.'
               : isBestTech
-                ? 'Your Best Technology IT project engagements.'
+                ? 'Your Best Technologies IT project engagements.'
                 : isBestInPrint
                   ? 'Your Best In Print jobs (books, fliers, and other print orders).'
                   : isOxygen

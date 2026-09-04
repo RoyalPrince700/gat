@@ -45,8 +45,8 @@ export const COMPANY_THEMES = {
   },
   'best-technology-it': {
     id: 'best-technology-it',
-    label: 'Best Technology IT',
-    brandHtml: { primary: 'Best', accent: 'Tech' },
+    label: 'Best Technologies IT',
+    brandHtml: { primary: 'Best', accent: 'Technologies IT' },
     accent: '#689F38',
     accentHover: '#558B2F',
     accentSoft: '#e8f5d9',
@@ -113,6 +113,20 @@ export const COMPANY_THEMES = {
     bgSoft: '#fdf9fa',
     line: 'rgba(155, 27, 48, 0.14)',
   },
+  'best-tech-construction': {
+    id: 'best-tech-construction',
+    label: 'Best Tech Construction',
+    brandHtml: { primary: 'Best Tech', accent: 'Construction' },
+    accent: '#689F38',
+    accentHover: '#558B2F',
+    accentSoft: '#e8f5d9',
+    brandSecondary: '#1a1a1a',
+    chartPrimary: '#689F38',
+    chartSecondary: '#4A5F66',
+    bg: '#f4f7ef',
+    bgSoft: '#f8fbf3',
+    line: 'rgba(104, 159, 56, 0.16)',
+  },
 };
 
 /** Nice URL segments → company slug in DB */
@@ -124,6 +138,8 @@ const PATH_TO_SLUG = {
   'best-technology-it': 'best-technology-it',
   bestinprint: 'best-in-print',
   'best-in-print': 'best-in-print',
+  besttechconstruction: 'best-tech-construction',
+  'best-tech-construction': 'best-tech-construction',
   accessible: 'accessible-publishers',
   accessiblepublishers: 'accessible-publishers',
   'accessible-publishers': 'accessible-publishers',
@@ -138,6 +154,7 @@ const SLUG_TO_PATH = {
   'smart-edu-hub': 'smarteduhub',
   'best-technology-it': 'besttech',
   'best-in-print': 'bestinprint',
+  'best-tech-construction': 'besttechconstruction',
   'accessible-publishers': 'accessible',
   'oxygen-fm': 'oxygen',
   trifone: 'trifone',
@@ -233,7 +250,7 @@ export const remapAdminPath = (pathname, nextCompanySlug) => {
   if (page === 'customers' && nextSlug !== 'smipay' && nextSlug !== 'trifone') {
     return `${root}/${nextPath}/overview`;
   }
-  // Clients shared by Best Technology IT and Best In Print
+  // Clients shared by Best Technologies IT and Best In Print
   if (
     page === 'clients' &&
     nextSlug !== 'best-technology-it' &&
@@ -256,6 +273,13 @@ export const remapAdminPath = (pathname, nextCompanySlug) => {
   if (oxygenOnly.includes(page) && nextSlug !== 'oxygen-fm') {
     return `${root}/${nextPath}/overview`;
   }
+  if (
+    page === 'reports' &&
+    nextSlug !== 'oxygen-fm' &&
+    nextSlug !== 'accessible-publishers'
+  ) {
+    return `${root}/${nextPath}/overview`;
+  }
   if (accessibleOnly.includes(page) && nextSlug !== 'accessible-publishers') {
     return `${root}/${nextPath}/overview`;
   }
@@ -275,7 +299,8 @@ export const remapAdminPath = (pathname, nextCompanySlug) => {
       nextSlug === 'oxygen-fm' ||
       nextSlug === 'trifone' ||
       nextSlug === 'best-in-print' ||
-      nextSlug === 'best-technology-it')
+      nextSlug === 'best-technology-it' ||
+      nextSlug === 'best-tech-construction')
   ) {
     return `${root}/${nextPath}/overview`;
   }

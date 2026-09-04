@@ -150,6 +150,12 @@ const AdminAccessibleOverview = () => {
           >
             Daily totals
           </Link>
+          <Link
+            to={adminCompanyPath(slug, 'reports', hubRoot)}
+            className="btn btn-ghost"
+          >
+            Reports
+          </Link>
         </div>
       </div>
 

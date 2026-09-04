@@ -14,7 +14,7 @@ const DEFAULT_COMPANIES = [
     description: 'School management system growth tracking',
   },
   {
-    name: 'Best Technology IT',
+    name: 'Best Technologies IT',
     slug: 'best-technology-it',
     type: 'other',
     description:
@@ -48,13 +48,23 @@ const DEFAULT_COMPANIES = [
     description:
       'Commercial printing company — books, fliers, and related print production jobs.',
   },
+  {
+    name: 'Best Tech Construction',
+    slug: 'best-tech-construction',
+    type: 'other',
+    description:
+      'Construction and building projects — site works, developments, and project delivery.',
+  },
 ];
 
 const ensureCompanies = async () => {
   for (const company of DEFAULT_COMPANIES) {
     await Company.findOneAndUpdate(
       { slug: company.slug },
-      { $setOnInsert: company },
+      {
+        $set: { name: company.name, description: company.description },
+        $setOnInsert: { slug: company.slug, type: company.type },
+      },
       { upsert: true, new: true }
     );
   }

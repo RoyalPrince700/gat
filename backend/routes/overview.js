@@ -298,7 +298,7 @@ router.get('/', protect, mdOrAdmin, async (req, res) => {
         eduRecords: smehGrowth?.recordCount || 0,
         eduFees: smehGrowth?.subscriptionRevenue || 0,
         eduEnrollments: smehGrowth?.subscribedSchoolCount || 0,
-        // Best Technology IT
+        // Best Technologies IT
         besttechClients: besttechGrowth?.clientCount || 0,
         besttechNewClients30d: besttechGrowth?.newClients30d || 0,
         besttechProjects: besttechGrowth?.projectCount || 0,

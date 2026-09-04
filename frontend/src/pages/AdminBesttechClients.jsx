@@ -60,7 +60,7 @@ const AdminBesttechClients = () => {
   if (!activeCompany || slug !== BESTTECH_SLUG) {
     return (
       <div className="page">
-        <p className="empty">Clients are available for Best Technology IT.</p>
+        <p className="empty">Clients are available for Best Technologies IT.</p>
       </div>
     );
   }

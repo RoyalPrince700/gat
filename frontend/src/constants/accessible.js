@@ -2,6 +2,28 @@ export const ACCESSIBLE_SLUG = 'accessible-publishers';
 
 export const ACCESSIBLE_SEASONS = ['2023-2024', '2024-2025', '2025-2026'];
 
+/** Department monthly reports (Accessible Publishers). */
+export const ACCESSIBLE_DEPARTMENTS = [
+  {
+    id: 'hr',
+    label: 'Admin / HR unit',
+    shortLabel: 'Admin / HR',
+  },
+  {
+    id: 'system-control',
+    label: 'System control unit',
+    shortLabel: 'System control',
+  },
+  {
+    id: 'customer-service',
+    label: 'Customer service operations',
+    shortLabel: 'Customer service',
+  },
+];
+
+export const accessibleDepartmentLabel = (id) =>
+  ACCESSIBLE_DEPARTMENTS.find((d) => d.id === id)?.label || id || '—';
+
 /** Infer canonical season from a filename like "2023-2024 SEASON.xlsx". */
 export const inferSeasonFromFilename = (filename) => {
   const match = String(filename || '').match(/(20\d{2})\s*[-_/]\s*(20\d{2})/);

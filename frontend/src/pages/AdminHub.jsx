@@ -6,6 +6,7 @@ import {
   Building2,
   Cpu,
   GraduationCap,
+  HardHat,
   Printer,
   Radio,
   Tablet,
@@ -34,6 +35,7 @@ const COMPANY_ICONS = {
   smipay: Wallet,
   'smart-edu-hub': GraduationCap,
   'best-technology-it': Cpu,
+  'best-tech-construction': HardHat,
   'best-in-print': Printer,
   'accessible-publishers': BookOpen,
   'oxygen-fm': Radio,
@@ -44,6 +46,7 @@ const COMPANY_LOGOS = {
   smipay: smipayLogo,
   'smart-edu-hub': smartEduHubLogo,
   'best-technology-it': bestTechLogo,
+  'best-tech-construction': bestTechLogo,
   'best-in-print': bestInPrintLogo,
   'accessible-publishers': accessibleLogo,
   'oxygen-fm': oxygenFmLogo,
@@ -85,7 +88,7 @@ const AdminHub = () => {
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>{isMd ? 'Portfolio overview' : 'Companies'}</h1>
+          <h1>Companies</h1>
           <p>
             {isMd
               ? 'Executive view of revenue, expenses, and which company is performing best. Open a workspace for detail.'
@@ -129,8 +132,49 @@ const AdminHub = () => {
         </div>
       )}
 
+      <div className="company-hub-grid">
+        {companies.map((company) => {
+          const theme = getThemeForSlug(company.slug);
+          const Icon = COMPANY_ICONS[company.slug] || Building2;
+          const logo = COMPANY_LOGOS[company.slug];
+          const perf = byCompany.find((r) => r.slug === company.slug);
+          return (
+            <Link
+              key={company._id}
+              to={adminCompanyPath(company.slug, 'overview', hubRoot)}
+              className="company-hub-card"
+              style={{ '--card-accent': theme.accent }}
+              onClick={() => switchCompany(company)}
+            >
+              <div className="company-hub-card-top">
+                <span className={`company-hub-mark${logo ? ' has-logo' : ''}`}>
+                  {logo ? (
+                    <img src={logo} alt={company.name} />
+                  ) : (
+                    <Icon size={20} strokeWidth={1.75} />
+                  )}
+                </span>
+                <span className="badge">{company.type}</span>
+              </div>
+              <div>
+                <h2>{company.name}</h2>
+                {perf && (
+                  <p className="company-hub-perf">
+                    Revenue {formatMoney(perf.revenue)} · Net{' '}
+                    {formatMoney(perf.net)}
+                  </p>
+                )}
+              </div>
+              <span className="company-hub-cta">
+                Enter workspace <ArrowRight size={16} strokeWidth={2} />
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+
       {byCompany.length > 0 && (
-        <section className="panel" style={{ marginBottom: '1.5rem' }}>
+        <section className="panel" style={{ marginTop: '1.5rem' }}>
           <div className="panel-head">
             <h2>Company performance</h2>
             <p className="hint" style={{ margin: 0, border: 'none', padding: 0 }}>
@@ -192,47 +236,6 @@ const AdminHub = () => {
           </div>
         </section>
       )}
-
-      <div className="company-hub-grid">
-        {companies.map((company) => {
-          const theme = getThemeForSlug(company.slug);
-          const Icon = COMPANY_ICONS[company.slug] || Building2;
-          const logo = COMPANY_LOGOS[company.slug];
-          const perf = byCompany.find((r) => r.slug === company.slug);
-          return (
-            <Link
-              key={company._id}
-              to={adminCompanyPath(company.slug, 'overview', hubRoot)}
-              className="company-hub-card"
-              style={{ '--card-accent': theme.accent }}
-              onClick={() => switchCompany(company)}
-            >
-              <div className="company-hub-card-top">
-                <span className={`company-hub-mark${logo ? ' has-logo' : ''}`}>
-                  {logo ? (
-                    <img src={logo} alt={company.name} />
-                  ) : (
-                    <Icon size={20} strokeWidth={1.75} />
-                  )}
-                </span>
-                <span className="badge">{company.type}</span>
-              </div>
-              <div>
-                <h2>{company.name}</h2>
-                {perf && (
-                  <p className="company-hub-perf">
-                    Revenue {formatMoney(perf.revenue)} · Net{' '}
-                    {formatMoney(perf.net)}
-                  </p>
-                )}
-              </div>
-              <span className="company-hub-cta">
-                Enter workspace <ArrowRight size={16} strokeWidth={2} />
-              </span>
-            </Link>
-          );
-        })}
-      </div>
 
       {isAdmin && (
         <div className="global-admin-links">

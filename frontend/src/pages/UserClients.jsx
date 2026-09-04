@@ -50,7 +50,7 @@ const UserClients = () => {
     return (
       <div className="page">
         <p className="empty">
-          Clients CRM is available for Best Technology IT only.
+          Clients CRM is available for Best Technologies IT only.
         </p>
       </div>
     );
@@ -113,7 +113,7 @@ const UserClients = () => {
         <div>
           <h1>Clients</h1>
           <p>
-            Enterprise clients Best Technology IT serves. Add a client here,
+            Enterprise clients Best Technologies IT serves. Add a client here,
             then log projects from Projects.
           </p>
         </div>

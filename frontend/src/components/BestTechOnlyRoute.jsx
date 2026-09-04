@@ -6,7 +6,7 @@ import {
 } from '../constants/themes';
 import { BESTTECH_SLUG } from '../constants/besttech';
 
-/** Redirects non–Best Technology IT company URLs away from BestTech-only pages. */
+/** Redirects non–Best Technologies IT company URLs away from BestTech-only pages. */
 const BestTechOnlyRoute = ({ children }) => {
   const { companySlug: pathSlug } = useParams();
   const hubRoot = hubRootFromPathname(useLocation().pathname);

@@ -20,7 +20,7 @@ const canAccess = (user) => {
 router.get('/', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT clients' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT clients' });
     }
 
     const clients = await BesttechClient.find()
@@ -79,7 +79,7 @@ router.get('/', protect, async (req, res) => {
 router.get('/:id', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT clients' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT clients' });
     }
 
     const client = await BesttechClient.findById(req.params.id).populate(
@@ -103,14 +103,14 @@ router.get('/:id', protect, async (req, res) => {
 router.post('/', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT clients' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT clients' });
     }
 
     const company = await getBesttechCompany();
     if (!company) {
       return res
         .status(404)
-        .json({ message: 'Best Technology IT not found. Run seed.' });
+        .json({ message: 'Best Technologies IT not found. Run seed.' });
     }
 
     const {
@@ -163,7 +163,7 @@ router.post('/', protect, async (req, res) => {
 router.put('/:id', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT clients' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT clients' });
     }
 
     const client = await BesttechClient.findById(req.params.id);
@@ -217,7 +217,7 @@ router.put('/:id', protect, async (req, res) => {
 router.delete('/:id', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT clients' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT clients' });
     }
 
     const client = await BesttechClient.findByIdAndDelete(req.params.id);

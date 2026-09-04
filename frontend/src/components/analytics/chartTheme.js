@@ -48,3 +48,18 @@ export const getSeriesColors = () => {
   const secondary = readCssVar('--brand-green', SMIPAY_COLORS.green);
   return [accent, secondary, '#3b82f6', '#a855f7', SMIPAY_COLORS.chartSecondary];
 };
+
+/** Executive / MD report charts — larger type for at-a-glance reading */
+export const REPORT_CHART = {
+  axisTick: { fontSize: 14, fontWeight: 600, fill: '#1d1d1f' },
+  axisStroke: '#6e6e73',
+  legend: {
+    wrapperStyle: { fontSize: 14, fontWeight: 600, paddingTop: 14 },
+    iconSize: 16,
+  },
+  barSize: { target: 18, actual: 24, previous: 18 },
+  rowHeight: 58,
+  minHeight: 300,
+  yAxisWidth: 230,
+  margin: { top: 12, right: 32, left: 8, bottom: 12 },
+};

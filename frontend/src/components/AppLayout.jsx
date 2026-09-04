@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   ContactRound,
+  FileText,
   FolderKanban,
   GraduationCap,
   IdCard,
@@ -263,6 +264,11 @@ const AppLayout = () => {
                 label: 'Bookings',
                 icon: Radio,
               },
+              {
+                to: `${hubRoot}/${companyBase}/reports`,
+                label: 'Reports',
+                icon: FileText,
+              },
             ]
           : []),
         ...(showAdminTrifone
@@ -295,6 +301,11 @@ const AppLayout = () => {
                 to: `${hubRoot}/${companyBase}/data-analysis`,
                 label: 'Data analysis',
                 icon: BarChart3,
+              },
+              {
+                to: `${hubRoot}/${companyBase}/reports`,
+                label: 'Reports',
+                icon: FileText,
               },
             ]
           : []),
@@ -413,9 +424,7 @@ const AppLayout = () => {
 
   const brand = theme.brandHtml;
   const topbarTitle = onPortfolioHub
-    ? isMd
-      ? 'Portfolio overview'
-      : 'All companies'
+    ? 'All companies'
     : activeCompany?.name || 'Select a company';
 
   const onCompanyChange = (value) => {

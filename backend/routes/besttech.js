@@ -26,7 +26,7 @@ const canAccess = (user) => {
 
 router.get('/meta', protect, async (req, res) => {
   if (!canAccess(req.user)) {
-    return res.status(403).json({ message: 'No access to Best Technology IT data' });
+    return res.status(403).json({ message: 'No access to Best Technologies IT data' });
   }
   res.json({
     serviceLines: SERVICE_LINES,
@@ -39,7 +39,7 @@ router.get('/meta', protect, async (req, res) => {
 router.get('/', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT data' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT data' });
     }
 
     const { from, to, client, status, serviceLine } = req.query;
@@ -78,14 +78,14 @@ router.get('/', protect, async (req, res) => {
 router.post('/', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT data' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT data' });
     }
 
     const company = await getBesttechCompany();
     if (!company) {
       return res
         .status(404)
-        .json({ message: 'Best Technology IT not found. Run seed.' });
+        .json({ message: 'Best Technologies IT not found. Run seed.' });
     }
 
     const {
@@ -186,7 +186,7 @@ router.post('/', protect, async (req, res) => {
 router.put('/:id', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT data' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT data' });
     }
 
     const record = await BesttechProject.findById(req.params.id);
@@ -269,7 +269,7 @@ router.put('/:id', protect, async (req, res) => {
 router.delete('/:id', protect, async (req, res) => {
   try {
     if (!canAccess(req.user)) {
-      return res.status(403).json({ message: 'No access to Best Technology IT data' });
+      return res.status(403).json({ message: 'No access to Best Technologies IT data' });
     }
 
     const record = await BesttechProject.findByIdAndDelete(req.params.id);

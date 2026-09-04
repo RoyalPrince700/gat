@@ -30,6 +30,7 @@ import AdminAccessibleOverview from './pages/AdminAccessibleOverview';
 import AdminAccessibleDailyTotals from './pages/AdminAccessibleDailyTotals';
 import AdminAccessibleSchoolPurchases from './pages/AdminAccessibleSchoolPurchases';
 import AdminAccessibleDataAnalysis from './pages/AdminAccessibleDataAnalysis';
+import AdminReportsGate from './components/AdminReportsGate';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminTotalAnalytics from './pages/AdminTotalAnalytics';
 import AdminCustomers from './pages/AdminCustomers';
@@ -91,7 +92,7 @@ const AdminCustomersGate = () => {
   );
 };
 
-/** Clients page is used by Best Technology IT and Best In Print. */
+/** Clients page is used by Best Technologies IT and Best In Print. */
 const AdminClientsGate = () => {
   const { companySlug: pathSlug } = useParams();
   const location = useLocation();
@@ -247,36 +248,8 @@ const companyWorkspaceRoute = (basePath) => (
       }
     />
     <Route
-      path="sales"
-      element={
-        <TrifoneOnlyRoute>
-          <AdminTrifoneSales />
-        </TrifoneOnlyRoute>
-      }
-    />
-    <Route
-      path="daily-totals"
-      element={
-        <AccessibleOnlyRoute>
-          <AdminAccessibleDailyTotals />
-        </AccessibleOnlyRoute>
-      }
-    />
-    <Route
-      path="school-purchases"
-      element={
-        <AccessibleOnlyRoute>
-          <AdminAccessibleSchoolPurchases />
-        </AccessibleOnlyRoute>
-      }
-    />
-    <Route
-      path="data-analysis"
-      element={
-        <AccessibleOnlyRoute>
-          <AdminAccessibleDataAnalysis />
-        </AccessibleOnlyRoute>
-      }
+      path="reports"
+      element={<AdminReportsGate />}
     />
   </Route>
 );

@@ -29,6 +29,7 @@ const oxygenRoutes = require('./routes/oxygen');
 const oxygenAdvertiserRoutes = require('./routes/oxygenAdvertisers');
 const accessibleRoutes = require('./routes/accessible');
 const accessiblePurchasesRoutes = require('./routes/accessiblePurchases');
+const accessibleDepartmentReportsRoutes = require('./routes/accessibleDepartmentReports');
 const trifoneRoutes = require('./routes/trifone');
 const trifoneCustomerRoutes = require('./routes/trifoneCustomers');
 const analyticsRoutes = require('./routes/analytics');
@@ -38,7 +39,7 @@ const start = async () => {
   await connectDB();
   await ensureCompanies();
   console.log(
-    'Companies ready (Smipay, Smart Edu Hub, Best Technology IT, Best In Print, Accessible Publishers, Oxygen FM, Trifone)'
+    'Companies ready (Smipay, Smart Edu Hub, Best Technologies IT, Best In Print, Best Tech Construction, Accessible Publishers, Oxygen FM, Trifone)'
   );
 
   const app = express();
@@ -79,6 +80,7 @@ const start = async () => {
   app.use('/api/oxygen/advertisers', oxygenAdvertiserRoutes);
   app.use('/api/oxygen', oxygenRoutes);
   app.use('/api/accessible', accessiblePurchasesRoutes);
+  app.use('/api/accessible', accessibleDepartmentReportsRoutes);
   app.use('/api/accessible', accessibleRoutes);
   app.use('/api/trifone/customers', trifoneCustomerRoutes);
   app.use('/api/trifone', trifoneRoutes);

@@ -3,7 +3,7 @@ const BesttechProject = require('../models/BesttechProject');
 const { SERVICE_LINES } = require('./besttechMeta');
 
 /**
- * Lightweight Best Technology IT overview aggregates (Phase 1).
+ * Lightweight Best Technologies IT overview aggregates (Phase 1).
  */
 const buildBesttechGrowth = async () => {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);

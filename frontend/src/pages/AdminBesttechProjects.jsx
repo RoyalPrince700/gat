@@ -76,7 +76,7 @@ const AdminBesttechProjects = () => {
   if (!activeCompany || slug !== BESTTECH_SLUG) {
     return (
       <div className="page">
-        <p className="empty">Projects are available for Best Technology IT.</p>
+        <p className="empty">Projects are available for Best Technologies IT.</p>
       </div>
     );
   }
@@ -90,7 +90,7 @@ const AdminBesttechProjects = () => {
         <div>
           <h1>Projects</h1>
           <p>
-            Software and digital marketing engagements across Best Technology
+            Software and digital marketing engagements across Best Technologies IT
             IT clients.
           </p>
         </div>
