@@ -200,7 +200,13 @@ const AdminAccessibleDataAnalysis = () => {
       ).length;
       return {
         ...rung,
-        examples: rung.examples || ACCESSIBLE_GIFT_LADDER[i]?.examples || [],
+        examples: (
+          ACCESSIBLE_GIFT_LADDER.find((item) => item.points === rung.points)
+            ?.examples ||
+          rung.examples ||
+          ACCESSIBLE_GIFT_LADDER[i]?.examples ||
+          []
+        ).slice(0, 10),
         spendEquivalent: rung.points * rate,
         giftValue,
         schoolsAtOrAbove,
@@ -883,8 +889,8 @@ const AdminAccessibleDataAnalysis = () => {
                 {formatNumber(loyalty.giftCostPerPoint)} (so 50 points × ₦
                 {formatNumber(loyalty.giftCostPerPoint)} ={' '}
                 {formatMoney(50 * loyalty.giftCostPerPoint)}). That is the
-                planning cost of one gift at that level — jotter, blender, phone,
-                etc. <strong>Clients in this rung</strong> are exclusive (50–249
+                planning cost of one gift at that level. Each band lists up to 10
+                gift options at that value. <strong>Clients in this rung</strong> are exclusive (50–249
                 points, 250–499, and so on), not cumulative. <strong>Rung total</strong>{' '}
                 = gift value × those clients, if everyone in the band redeemed
                 that gift.
@@ -914,14 +920,18 @@ const AdminAccessibleDataAnalysis = () => {
                           <td>{formatMoney(row.giftValue)}</td>
                           <td>
                             <strong>{row.label}</strong>
-                            <div
+                            <ol
                               style={{
+                                margin: '0.35rem 0 0',
+                                paddingLeft: '1.15rem',
                                 color: 'var(--muted)',
                                 fontSize: '0.82rem',
                               }}
                             >
-                              {(row.examples || []).join(' · ')}
-                            </div>
+                              {(row.examples || []).map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ol>
                           </td>
                           <td>{formatNumber(row.clientsInRung)}</td>
                           <td>{formatMoney(row.categoryTotal)}</td>

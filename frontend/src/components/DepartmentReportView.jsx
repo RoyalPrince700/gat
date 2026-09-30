@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
+  BarChart3,
   ClipboardList,
   Eye,
   Target,
@@ -31,6 +33,7 @@ import {
   parseBulletItem,
   parseDepartmentReport,
 } from '../utils/parseDepartmentReport';
+import { buildHealthSnapshot } from '../utils/reportHealth';
 
 const PIE_COLORS = ['#16a34a', '#e11d48', '#2563eb', '#f59e0b'];
 
@@ -350,37 +353,53 @@ const PriorityCard = ({ row }) => (
   </article>
 );
 
+const HealthCard = ({ item }) => (
+  <article className={`report-health-card report-health-card-${item.tone}`}>
+    <div className="report-health-card-top">
+      <span className={`report-status-badge ${item.tone}`}>{item.statusLabel}</span>
+      {item.fact && <span className="report-health-fact">{item.fact}</span>}
+    </div>
+    <h4>{item.name}</h4>
+    {item.readout && <p>{item.readout}</p>}
+    {item.barPct != null && (
+      <div
+        className="report-health-bar"
+        role="img"
+        aria-label={`${item.fact || item.name}`}
+      >
+        <span
+          className={`report-health-bar-fill ${item.tone}`}
+          style={{ width: `${item.barPct}%` }}
+        />
+      </div>
+    )}
+  </article>
+);
+
 const DepartmentReportView = ({ content }) => {
+  const [showNumbers, setShowNumbers] = useState(false);
   const { charts, executive } = useMemo(
     () => parseDepartmentReport(content),
     [content]
   );
 
-  const headlineKpis = useMemo(() => {
-    const scorecard = charts.find(
-      (c) =>
-        c.type === 'targetActual' &&
-        c.unit === '%' &&
-        c.title?.toLowerCase().includes('scorecard')
-    );
-    if (scorecard?.points?.length) return scorecard.points.slice(0, 4);
-    const anyPct = charts.find(
-      (c) => c.type === 'targetActual' && c.unit === '%' && c.points?.length >= 3
-    );
-    return anyPct?.points?.slice(0, 4) || [];
-  }, [charts]);
+  const health = useMemo(
+    () => buildHealthSnapshot(charts, executive),
+    [charts, executive]
+  );
 
-  const displayCharts = useMemo(() => {
-    if (!headlineKpis.length) return charts;
-    return charts.filter(
-      (c) =>
-        !(
-          c.type === 'targetActual' &&
-          c.unit === '%' &&
-          c.title?.toLowerCase().includes('scorecard')
-        )
-    );
-  }, [charts, headlineKpis.length]);
+  const displayCharts = useMemo(
+    () =>
+      charts.filter(
+        (c) =>
+          !(
+            c.type === 'targetActual' &&
+            c.unit === '%' &&
+            c.title?.toLowerCase().includes('scorecard')
+          )
+      ),
+    [charts]
+  );
 
   if (!content?.trim()) {
     return <p className="empty">No content yet.</p>;
@@ -394,47 +413,72 @@ const DepartmentReportView = ({ content }) => {
     executive.priorities.length ||
     executive.statusRows.length;
 
+  const hasHealth = health.items.length > 0;
+
   return (
     <div className="department-report-view report-md-view">
-      {headlineKpis.length > 0 && (
-        <div className="report-headline-kpis">
-          {headlineKpis.map((p) => {
-            const gap =
-              p.target != null && p.actual != null ? p.actual - p.target : null;
-            const tone =
-              gap == null ? '' : gap >= 0 ? 'up' : gap >= -10 ? 'mid' : 'down';
-            return (
-              <div
-                className={`report-headline-kpi ${tone}`}
-                key={p.fullName || p.name}
-              >
-                <div className="report-headline-kpi-value">
-                  {formatValue(p.actual, '%')}
-                </div>
-                <div className="report-headline-kpi-label">
-                  {axisLabel(p.fullName || p.name)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {displayCharts.length > 0 && (
-        <div className="report-charts-strip">
-          {displayCharts.map((chart, idx) => (
-            <ChartCard key={`${chart.title}-${idx}`} chart={chart} />
-          ))}
-        </div>
-      )}
-
-      {hasExecutive ? (
+      {hasExecutive || hasHealth ? (
         <div className="report-exec-brief report-md-brief">
           {executive.summary && (
             <section className="report-md-hero">
               <SectionHeader icon={Eye} title="At a glance" tone="hero" />
               <p className="report-md-hero-text">{executive.summary}</p>
             </section>
+          )}
+
+          {hasHealth && (
+            <section className="report-md-block report-md-block-health">
+              <SectionHeader
+                icon={Activity}
+                title="What the numbers mean"
+                tone="kpi"
+              />
+              <p className="report-health-lead">
+                People and progress first. Charts stay tucked away unless you
+                need the exact figures.
+              </p>
+              {health.groups.map((group) => (
+                <div
+                  className={`report-health-group report-health-group-${group.tone}`}
+                  key={group.tone}
+                >
+                  <h4 className="report-health-group-title">{group.title}</h4>
+                  <div className="report-health-grid">
+                    {group.items.map((item) => (
+                      <HealthCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {displayCharts.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-ghost report-health-toggle"
+                  onClick={() => setShowNumbers((v) => !v)}
+                >
+                  <BarChart3 size={16} aria-hidden />
+                  {showNumbers
+                    ? 'Hide charts'
+                    : 'Show charts & exact figures'}
+                </button>
+              )}
+            </section>
+          )}
+
+          {showNumbers && displayCharts.length > 0 && (
+            <div className="report-charts-strip">
+              {displayCharts.map((chart, idx) => (
+                <ChartCard key={`${chart.title}-${idx}`} chart={chart} />
+              ))}
+            </div>
+          )}
+
+          {!hasHealth && displayCharts.length > 0 && (
+            <div className="report-charts-strip">
+              {displayCharts.map((chart, idx) => (
+                <ChartCard key={`${chart.title}-${idx}`} chart={chart} />
+              ))}
+            </div>
           )}
 
           <div className="report-exec-grid report-md-grid">

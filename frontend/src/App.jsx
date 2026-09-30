@@ -248,6 +248,38 @@ const companyWorkspaceRoute = (basePath) => (
       }
     />
     <Route
+      path="sales"
+      element={
+        <TrifoneOnlyRoute>
+          <AdminTrifoneSales />
+        </TrifoneOnlyRoute>
+      }
+    />
+    <Route
+      path="daily-totals"
+      element={
+        <AccessibleOnlyRoute>
+          <AdminAccessibleDailyTotals />
+        </AccessibleOnlyRoute>
+      }
+    />
+    <Route
+      path="school-purchases"
+      element={
+        <AccessibleOnlyRoute>
+          <AdminAccessibleSchoolPurchases />
+        </AccessibleOnlyRoute>
+      }
+    />
+    <Route
+      path="data-analysis"
+      element={
+        <AccessibleOnlyRoute>
+          <AdminAccessibleDataAnalysis />
+        </AccessibleOnlyRoute>
+      }
+    />
+    <Route
       path="reports"
       element={<AdminReportsGate />}
     />

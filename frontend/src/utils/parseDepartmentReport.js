@@ -262,8 +262,16 @@ const extractAttendancePie = (text) => {
       type: 'pie',
       title: 'KSS attendance',
       points: [
-        { name: `Attended (${attended[1]})`, value: Number(attended[2]) },
-        { name: `Absent (${absent[1]})`, value: Number(absent[2]) },
+        {
+          name: `Attended (${attended[1]})`,
+          value: Number(attended[2]),
+          count: Number(attended[1]),
+        },
+        {
+          name: `Absent (${absent[1]})`,
+          value: Number(absent[2]),
+          count: Number(absent[1]),
+        },
       ],
     },
   };
