@@ -53,12 +53,12 @@ const COMPANY_LOGOS = {
   trifone: trifoneLogo,
 };
 
-const MD_CARD_NAMES = {
-  'best-in-print': 'Print',
-  'best-technology-it': 'Tech',
-  'best-tech-construction': 'Construction',
-  'oxygen-fm': 'Oxygen Radio',
-  trifone: 'Trifone Gadgets',
+const COMPANY_TYPE_TAGS = {
+  'best-in-print': 'print',
+  'best-technology-it': 'tech',
+  'best-tech-construction': 'construction',
+  'oxygen-fm': 'oxygen radio',
+  trifone: 'trifone gadgets',
 };
 
 const AdminHub = () => {
@@ -150,8 +150,7 @@ const AdminHub = () => {
           const Icon = COMPANY_ICONS[company.slug] || Building2;
           const logo = COMPANY_LOGOS[company.slug];
           const perf = byCompany.find((r) => r.slug === company.slug);
-          const displayName =
-            (isMd && MD_CARD_NAMES[company.slug]) || company.name;
+          const typeTag = COMPANY_TYPE_TAGS[company.slug] || company.type;
           return (
             <Link
               key={company._id}
@@ -163,15 +162,15 @@ const AdminHub = () => {
               <div className="company-hub-card-top">
                 <span className={`company-hub-mark${logo ? ' has-logo' : ''}`}>
                   {logo ? (
-                    <img src={logo} alt={displayName} />
+                    <img src={logo} alt={company.name} />
                   ) : (
                     <Icon size={20} strokeWidth={1.75} />
                   )}
                 </span>
-                <span className="badge">{company.type}</span>
+                <span className="badge">{typeTag}</span>
               </div>
               <div>
-                <h2>{displayName}</h2>
+                <h2>{company.name}</h2>
                 {perf && (
                   <p className="company-hub-perf">
                     Revenue {formatMoney(perf.revenue)} · Net{' '}
@@ -211,8 +210,6 @@ const AdminHub = () => {
               <tbody>
                 {byCompany.map((row, index) => {
                   const theme = getThemeForSlug(row.slug);
-                  const displayName =
-                    (isMd && MD_CARD_NAMES[row.slug]) || row.name;
                   return (
                     <tr key={row.slug}>
                       <td>
@@ -225,7 +222,7 @@ const AdminHub = () => {
                         )}
                       </td>
                       <td>
-                        <strong>{displayName}</strong>
+                        <strong>{row.name}</strong>
                       </td>
                       <td>{formatMoney(row.revenue ?? 0)}</td>
                       <td>{formatMoney(row.expenses ?? 0)}</td>
