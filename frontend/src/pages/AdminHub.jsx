@@ -53,6 +53,14 @@ const COMPANY_LOGOS = {
   trifone: trifoneLogo,
 };
 
+const MD_CARD_NAMES = {
+  'best-in-print': 'Print',
+  'best-technology-it': 'Tech',
+  'best-tech-construction': 'Construction',
+  'oxygen-fm': 'Oxygen Radio',
+  trifone: 'Trifone Gadgets',
+};
+
 const AdminHub = () => {
   const { user } = useAuth();
   const location = useLocation();
@@ -105,30 +113,34 @@ const AdminHub = () => {
               {formatNumber(summary.companyCount ?? companies.length)}
             </div>
           </div>
-          <div className="stat">
-            <div className="stat-label">Team users</div>
-            <div className="stat-value">
-              {formatNumber(summary.teamUserCount ?? 0)}
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-label">Total revenue</div>
-            <div className="stat-value">
-              {formatMoney(summary.totalRevenue ?? 0)}
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-label">Total expenses</div>
-            <div className="stat-value">
-              {formatMoney(summary.totalExpenses ?? 0)}
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-label">Net</div>
-            <div className="stat-value">
-              {formatMoney(summary.netPosition ?? 0)}
-            </div>
-          </div>
+          {!isMd && (
+            <>
+              <div className="stat">
+                <div className="stat-label">Team users</div>
+                <div className="stat-value">
+                  {formatNumber(summary.teamUserCount ?? 0)}
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-label">Total revenue</div>
+                <div className="stat-value">
+                  {formatMoney(summary.totalRevenue ?? 0)}
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-label">Total expenses</div>
+                <div className="stat-value">
+                  {formatMoney(summary.totalExpenses ?? 0)}
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-label">Net</div>
+                <div className="stat-value">
+                  {formatMoney(summary.netPosition ?? 0)}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -138,6 +150,8 @@ const AdminHub = () => {
           const Icon = COMPANY_ICONS[company.slug] || Building2;
           const logo = COMPANY_LOGOS[company.slug];
           const perf = byCompany.find((r) => r.slug === company.slug);
+          const displayName =
+            (isMd && MD_CARD_NAMES[company.slug]) || company.name;
           return (
             <Link
               key={company._id}
@@ -149,7 +163,7 @@ const AdminHub = () => {
               <div className="company-hub-card-top">
                 <span className={`company-hub-mark${logo ? ' has-logo' : ''}`}>
                   {logo ? (
-                    <img src={logo} alt={company.name} />
+                    <img src={logo} alt={displayName} />
                   ) : (
                     <Icon size={20} strokeWidth={1.75} />
                   )}
@@ -157,7 +171,7 @@ const AdminHub = () => {
                 <span className="badge">{company.type}</span>
               </div>
               <div>
-                <h2>{company.name}</h2>
+                <h2>{displayName}</h2>
                 {perf && (
                   <p className="company-hub-perf">
                     Revenue {formatMoney(perf.revenue)} · Net{' '}
@@ -197,6 +211,8 @@ const AdminHub = () => {
               <tbody>
                 {byCompany.map((row, index) => {
                   const theme = getThemeForSlug(row.slug);
+                  const displayName =
+                    (isMd && MD_CARD_NAMES[row.slug]) || row.name;
                   return (
                     <tr key={row.slug}>
                       <td>
@@ -209,7 +225,7 @@ const AdminHub = () => {
                         )}
                       </td>
                       <td>
-                        <strong>{row.name}</strong>
+                        <strong>{displayName}</strong>
                       </td>
                       <td>{formatMoney(row.revenue ?? 0)}</td>
                       <td>{formatMoney(row.expenses ?? 0)}</td>
